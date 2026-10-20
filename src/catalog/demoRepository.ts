@@ -18,7 +18,7 @@ export function createDemoRepository(): CatalogRepository {
     titles.map((title, i) => ({
       id: kind + "-" + i,
       title,
-      artist: "Acervo Musical",
+      artist: "Louvores Cora",
       kind,
       status: "published",
       content:

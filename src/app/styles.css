@@ -65,6 +65,7 @@ p {
   font-size: 23px;
   font-weight: 700;
   letter-spacing: -1px;
+  white-space: nowrap;
 }
 .brand-light {
   font-weight: 400;
@@ -125,9 +126,15 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 54px 16px 51px 0;
+  gap: 20px;
+  padding: 32px 16px 32px 0;
   border-bottom: 1px solid var(--line);
-  min-height: 310px;
+}
+.hero > div:first-child {
+  min-width: 0;
+}
+.hero h1 {
+  margin-top: 0;
 }
 .eyebrow {
   font-size: 10px;
@@ -168,6 +175,7 @@ h1 em {
   height: 215px;
   margin-right: 74px;
   transform: rotate(6deg);
+  flex-shrink: 0;
 }
 .paper {
   position: absolute;
@@ -243,6 +251,12 @@ h1 em {
   font-size: 26px;
   letter-spacing: -0.5px;
   margin-top: 9px;
+}
+.catalog-instruction {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #757d71;
 }
 .count-label {
   font-size: 11px;
@@ -549,27 +563,6 @@ h1 em {
   display: block;
   margin: 12px auto 0;
 }
-.print-tip {
-  display: flex;
-  gap: 13px;
-  padding-top: 24px;
-  border-top: 1px solid var(--line);
-  margin-top: 23px;
-  color: #9aab87;
-}
-.print-tip > span {
-  font-size: 30px;
-  line-height: 1;
-}
-.print-tip p {
-  font-size: 10px;
-  line-height: 1.8;
-  color: #7e8d6d;
-}
-.print-tip strong {
-  font-weight: 400;
-  color: #6f8562;
-}
 .empty {
   padding: 45px 15px;
   text-align: center;
@@ -582,26 +575,6 @@ h1 em {
   font-size: 12px;
   line-height: 1.6;
   margin: 12px 0;
-}
-.how-it-works {
-  border-top: 1px solid var(--line);
-  padding: 28px 0 34px;
-}
-.how-it-works .eyebrow {
-  font-size: 9px;
-}
-.how-it-works > div {
-  display: flex;
-  gap: 48px;
-  margin-top: 17px;
-  font-size: 11px;
-  color: #75846a;
-}
-.how-it-works b {
-  font-weight: 400;
-  color: #899b76;
-  font-size: 11px;
-  margin-right: 7px;
 }
 .site-footer {
   max-width: 1260px;
@@ -688,9 +661,6 @@ h1 em {
   .section-heading h2 {
     font-size: 23px;
   }
-  .how-it-works > div {
-    gap: 22px;
-  }
 }
 @media (max-width: 720px) {
   .site-header {
@@ -707,9 +677,6 @@ h1 em {
   .site-header nav {
     gap: 17px;
     font-size: 11px;
-  }
-  .site-header nav > a:nth-child(2) {
-    display: none;
   }
   .admin-link {
     padding-left: 0;
@@ -811,13 +778,6 @@ h1 em {
   }
   .selection-help {
     font-size: 10px;
-  }
-  .print-tip {
-    display: none;
-  }
-  .how-it-works > div {
-    flex-direction: column;
-    gap: 15px;
   }
   .site-footer {
     padding: 22px 20px;

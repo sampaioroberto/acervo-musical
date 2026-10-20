@@ -9,7 +9,7 @@ it("searches title and artist without accents and exposes four selections", asyn
   expect(songs).toHaveLength(1);
   expect(songs[0].title).toBe("Canção do amanhecer");
   expect(
-    await repo.listPublished({ kind: "lyrics", search: "acervo" }),
+    await repo.listPublished({ kind: "lyrics", search: "cora" }),
   ).toHaveLength(4);
   render(<CatalogPage repository={repo} onCompose={() => {}} />);
   const buttons = await screen.findAllByRole("button", { name: /Selecionar / });

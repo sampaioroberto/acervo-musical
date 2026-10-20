@@ -56,14 +56,13 @@ export function App() {
             <Music2 size={23} />
           </span>
           <span>
-            acervo<span className="brand-light">musical</span>
+            Louvores <span className="brand-light">Cora</span>
           </span>
         </a>
         <nav aria-label="Navegação principal">
           <a className={!admin ? "current" : ""} href="#/">
             Acervo
           </a>
-          <a href="#como-funciona">Como funciona</a>
           <a className="admin-link" href="#/admin">
             Administração
             <ArrowUpRight size={15} />
@@ -73,8 +72,7 @@ export function App() {
       {services.mode === "demo" && (
         <div className="demo-banner">
           <span />
-          Modo de demonstração · Músicas autorais de exemplo. O acervo
-          compartilhado ainda não está conectado.
+          Demonstração · Músicas de exemplo.
         </div>
       )}
       <Suspense
@@ -91,12 +89,7 @@ export function App() {
             <AdminPage repo={services.repository} auth={services.auth} />
           ) : (
             <main className="page admin-page">
-              <p className="eyebrow">ADMINISTRAÇÃO</p>
-              <h1>
-                Seu acervo,
-                <br />
-                <em>bem cuidado.</em>
-              </h1>
+              <h1>Administração</h1>
               <p>A administração fica disponível após conectar o Supabase.</p>
               <a className="button secondary" href="#/">
                 Voltar ao acervo
@@ -118,9 +111,8 @@ export function App() {
       </Suspense>
       <footer className="site-footer">
         <span>
-          <Music2 size={15} /> Feito para reunir músicas e pessoas.
+          <Music2 size={15} /> Louvores Cora
         </span>
-        <span>Acervo Musical · 2026</span>
       </footer>
     </>
   );

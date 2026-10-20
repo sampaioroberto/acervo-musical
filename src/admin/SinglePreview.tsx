@@ -45,7 +45,6 @@ export function SinglePreview({
     <Dialog label="Prévia da música" onClose={onClose}>
       <div className="composer-heading">
         <div>
-          <p className="eyebrow">CONFERIR ANTES DE PUBLICAR</p>
           <h2>{song.title || "Prévia da música"}</h2>
         </div>
         <button
@@ -63,7 +62,7 @@ export function SinglePreview({
           <>
             <p className="catalog-hint">
               {song.kind === "lyrics"
-                ? "Prévia individual na largura de uma coluna. A composição final acomoda duas letras em cada coluna."
+                ? "Uma letra por vez. No PDF final, duas letras por coluna."
                 : "Confira os acordes e as quebras de página."}
             </p>
             <PdfPreview bytes={result.bytes} />

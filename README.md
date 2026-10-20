@@ -1,4 +1,4 @@
-# Acervo Musical
+# Louvores Cora
 
 Site para organizar letras e cifras e gerar PDFs para impressão. Os visitantes não precisam de login. Uma única conta administrativa cuida das importações, revisões, rascunhos, publicações e exclusões.
 

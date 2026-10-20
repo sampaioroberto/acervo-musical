@@ -27,8 +27,7 @@ export function PdfComposer({
     <Dialog label="Prévia do PDF" onClose={onClose}>
       <div className="composer-heading">
         <div>
-          <p className="eyebrow">PRONTO PARA IMPRIMIR</p>
-          <h2>Seu repertório no papel</h2>
+          <h2>Prévia do PDF</h2>
         </div>
         <button
           className="icon-button"

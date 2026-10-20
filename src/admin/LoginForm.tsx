@@ -29,19 +29,9 @@ export function LoginForm({
   return (
     <div className="login-layout">
       <div>
-        <p className="eyebrow">ESPAÇO DO ADMINISTRADOR</p>
-        <h1>
-          Seu acervo,
-          <br />
-          <em>bem cuidado.</em>
-        </h1>
-        <p className="hero-copy">
-          Um lugar para organizar as músicas
-          <br />
-          que vão reunir muitas vozes.
-        </p>
+        <h1>Louvores <em>Cora</em></h1>
         <a className="text-button back-link" href="#/">
-          ← Voltar ao acervo público
+          ← Voltar ao acervo
         </a>
       </div>
       <form className="login-card" onSubmit={submit}>
@@ -49,7 +39,6 @@ export function LoginForm({
           <LockKeyhole size={23} />
         </span>
         <h2>Entrar na administração</h2>
-        <p>Use a conta autorizada para cuidar do acervo.</p>
         <label>
           E-mail
           <input

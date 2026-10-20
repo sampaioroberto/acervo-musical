@@ -174,9 +174,7 @@ export function AdminWorkspace({
     <main className="page admin-page">
       <div className="admin-heading">
         <div>
-          <p className="eyebrow">ESPAÇO DO ADMINISTRADOR</p>
           <h1>Administrar acervo</h1>
-          <p>Importe, confira e publique suas músicas.</p>
         </div>
         <button className="button secondary" onClick={onSignOut}>
           <LogOut size={15} />
@@ -201,12 +199,11 @@ export function AdminWorkspace({
         <section className="upload-section">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">NOVAS MÚSICAS</p>
-              <h2>Do arquivo para o acervo</h2>
+              <h2>Adicionar músicas</h2>
             </div>
           </div>
           <label className="batch-kind">
-            Tipo do lote
+            Tipo
             <select
               value={kind}
               onChange={(e) => setKind(e.target.value as SongKind)}
@@ -219,10 +216,10 @@ export function AdminWorkspace({
           <label className={"upload-zone " + (locked ? "is-busy" : "")}>
             <Upload size={29} strokeWidth={1.3} />
             <strong>
-              {busy ? "Processando o lote…" : "Escolha seus arquivos"}
+              {busy ? "Lendo arquivos…" : "Enviar arquivos"}
             </strong>
             <span>DOCX ou PDF · Até 20 arquivos de 10 MiB cada</span>
-            <small>Um arquivo por música. Você revisa antes de publicar.</small>
+            <small>Um arquivo por música.</small>
             <input
               type="file"
               multiple
@@ -302,7 +299,6 @@ export function AdminWorkspace({
         <section className="managed-catalog" aria-label="Músicas cadastradas">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">SUA BIBLIOTECA</p>
               <h2>Músicas cadastradas</h2>
             </div>
             <span className="count-label">{records.length}</span>
@@ -311,7 +307,7 @@ export function AdminWorkspace({
           {!loading && !records.length && (
             <div className="empty">
               <FileText size={28} strokeWidth={1} />
-              <p>Seu acervo começa com a primeira música.</p>
+              <p>Nenhuma música cadastrada.</p>
             </div>
           )}
           <div className="admin-records">
@@ -320,8 +316,8 @@ export function AdminWorkspace({
                 <div>
                   <h3>{song.title}</h3>
                   <p>
-                    {song.kind === "lyrics" ? "Letra" : "Cifra"} ·{" "}
-                    {song.artist || "Artista não informado"}
+                    {song.kind === "lyrics" ? "Letra" : "Cifra"}
+                    {song.artist && <> · {song.artist}</>}
                   </p>
                   <span className={"publication-status " + song.status}>
                     {song.status === "published" ? "Publicado" : "Rascunho"}

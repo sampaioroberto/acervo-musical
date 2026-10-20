@@ -53,7 +53,6 @@ export function SongEditor({
     <Dialog label="Editar música" onClose={onClose}>
       <div className="composer-heading">
         <div>
-          <p className="eyebrow">ADMINISTRAÇÃO</p>
           <h2>Editar música</h2>
         </div>
         <button

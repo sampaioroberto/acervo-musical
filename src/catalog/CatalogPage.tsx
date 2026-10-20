@@ -59,18 +59,10 @@ export function CatalogPage({
     <main className="page">
       <section className="hero">
         <div>
-          <p className="eyebrow">
-            <span /> SUA BIBLIOTECA DE MÚSICAS
-          </p>
           <h1>
-            Um acervo.
-            <br />
-            <em>Muitas vozes.</em>
+            Louvores <em>Cora</em>
           </h1>
-          <p className="hero-copy">
-            Encontre suas músicas, monte uma seleção
-            <br /> e leve tudo pronto para cantar.
-          </p>
+          <p className="hero-copy">Letras e cifras para as visitas ao Cora.</p>
         </div>
         <div className="hero-illustration" aria-hidden="true">
           <div className="paper paper-back" />
@@ -81,7 +73,7 @@ export function CatalogPage({
               <div />
               <div />
             </div>
-            <span>ACERVO MUSICAL</span>
+            <span>LOUVORES CORA</span>
           </div>
           <span className="illustration-dot">♪</span>
         </div>
@@ -90,8 +82,10 @@ export function CatalogPage({
         <section className="catalog" aria-label="Acervo de músicas">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">EXPLORE O ACERVO</p>
-              <h2>Escolha o que vai cantar</h2>
+              <h2>Músicas</h2>
+              <p className="catalog-instruction">
+                Selecione 4 músicas e gere o PDF.
+              </p>
             </div>
             <span className="count-label">
               {status === "ready" ? songs.length : "—"}{" "}
@@ -130,8 +124,8 @@ export function CatalogPage({
           </div>
           <p className="catalog-hint">
             {selection.kind === "lyrics"
-              ? "Quatro letras, uma folha A4. Duas músicas em cada coluna."
-              : "Quatro cifras, um PDF. Cada música começa em uma nova página."}
+              ? "4 letras em uma folha A4, duas por coluna."
+              : "4 cifras, cada música em uma nova página."}
           </p>
           <div aria-live="polite">
             {status === "loading" && (
@@ -177,7 +171,7 @@ export function CatalogPage({
                         aria-expanded={expanded === song.id}
                       >
                         <h3>{song.title}</h3>
-                        <span>{song.artist || "Artista não informado"}</span>
+                        {song.artist && <span>{song.artist}</span>}
                       </button>
                       <span className="type-pill">
                         {song.kind === "lyrics" ? "Letra" : "Cifra"}
@@ -223,20 +217,6 @@ export function CatalogPage({
           onCompose={onCompose}
         />
       </div>
-      <section className="how-it-works" id="como-funciona">
-        <p className="eyebrow">SIMPLES, DO COMEÇO AO FIM</p>
-        <div>
-          <span>
-            <b>01</b> Escolha letras ou cifras
-          </span>
-          <span>
-            <b>02</b> Selecione quatro músicas
-          </span>
-          <span>
-            <b>03</b> Ajuste e baixe seu PDF
-          </span>
-        </div>
-      </section>
     </main>
   );
 }

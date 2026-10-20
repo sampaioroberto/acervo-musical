@@ -20,7 +20,7 @@ export function SelectionPanel({
         </span>
         <div>
           <h2>Sua seleção</h2>
-          <p>Na ordem em que vão aparecer</p>
+          <p>Ordem no PDF</p>
         </div>
         <span className="selection-count">
           {songs.length}
@@ -93,7 +93,7 @@ export function SelectionPanel({
             " música" +
             (songs.length === 3 ? "" : "s") +
             " para continuar."
-          : "Tudo pronto. Confira a prévia antes de baixar."}
+          : "Confira a prévia antes de baixar."}
       </p>
       {songs.length > 0 && (
         <button
@@ -103,16 +103,6 @@ export function SelectionPanel({
           Limpar seleção
         </button>
       )}
-      <div className="print-tip">
-        <span>✧</span>
-        <p>
-          <strong>Do acervo para o papel.</strong>
-          <br />
-          Organize suas músicas e imprima
-          <br />
-          para ter sempre por perto.
-        </p>
-      </div>
     </aside>
   );
 }
