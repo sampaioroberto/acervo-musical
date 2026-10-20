@@ -16,4 +16,3 @@ Nunca coloque senha, chave secret/service_role ou credencial do banco no fronten
 Requer Docker em execução. npm run backend:start inicia somente os serviços necessários em portas 55321/55322, com project_id acervo-musical-local. É uma cópia local de teste, sem conexão à produção. Aplique a migração com o Supabase CLI local antes de executar npm run test:integration. O runner recusa endereços externos e mantém as chaves locais em memória.
 
 Não execute reset de banco em produção. Para conferir o esquema local, use supabase gen types typescript --local --schema public. O bucket originals é privado e aceita arquivos de até 10 MiB. O limite de 20 arquivos por lote é controlado pela aplicação.
-

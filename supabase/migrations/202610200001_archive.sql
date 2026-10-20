@@ -84,4 +84,3 @@ begin
 end; $$;
 revoke all on function public.save_song(jsonb,jsonb),public.delete_song(uuid),public.prepare_song_update(),public.mark_original_cleanup() from public,anon;
 grant execute on function public.save_song(jsonb,jsonb),public.delete_song(uuid) to authenticated;
-

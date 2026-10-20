@@ -23,4 +23,3 @@ Abra a URL em uma janela sem sessão administrativa. Consulte o acervo, selecion
 Os workflows usam Actions oficiais com versões fixadas por versão principal. Referência: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
 
 Uma compilação local aprovada não comprova publicação. A publicação só está concluída após o workflow retornar sucesso e a URL real funcionar. Até lá, use a prévia local e consulte verification.md para os limites da validação.
-

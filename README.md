@@ -40,4 +40,3 @@ Siga [as instruções do GitHub Pages](docs/publication.md). O workflow valida o
 Word é lido como texto a partir do XML, sem executar HTML. PDF é reconstruído a partir das posições dos textos selecionáveis. Fontes, imagens, tabelas e layouts complexos dos originais não são copiados fielmente; confira sempre a revisão, especialmente em cifras. Arquivos sem texto útil podem ser cadastrados por colagem manual, sem anexar o original que falhou. Não há OCR, transposição ou divisão automática de várias músicas no mesmo arquivo.
 
 Os arquivos das fontes e a licença OFL acompanham o código em public/fonts/. Veja também a [especificação](docs/superpowers/specs/2026-10-20-acervo-musical-design.md), o [plano](docs/superpowers/plans/2026-10-20-acervo-musical-implementation.md) e o [registro de verificação](docs/verification.md).
-

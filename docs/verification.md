@@ -38,4 +38,3 @@ Não foi criado ou conectado um projeto Supabase na nuvem. É necessário provis
 - Mammoth foi substituído por fflate e leitura inerte de WordprocessingML após a auditoria identificar uma dependência transitiva sem correção adequada. A extração de parágrafos, quebras e tabulações foi coberta por DOCX real de teste; layouts complexos continuam fora do escopo aprovado.
 - A conferência de importação no navegador foi feita na etapa 7, quando a interface de upload ficou disponível, após os testes dos importadores na etapa 6.
 - A validação local de interface usou CUA; Playwright permanece preparado para execução automatizada no CI. O custo dessa escolha é a ausência de uma rodada automatizada local de Playwright.
-

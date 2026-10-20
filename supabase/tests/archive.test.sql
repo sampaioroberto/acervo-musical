@@ -7,4 +7,3 @@ select extensions.is(has_function_privilege('anon','public.save_song(jsonb,jsonb
 select extensions.is(has_table_privilege('anon','public.song_originals','SELECT'),false,'anonymous cannot read originals');
 select * from extensions.finish();
 rollback;
-
