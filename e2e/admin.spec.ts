@@ -57,7 +57,7 @@ test("separates PDF chord pages, joins a continuation and lets visitors consult 
     .getByLabel("Senha", { exact: true })
     .fill("Local-Musical-Test-2026!");
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await page.getByLabel("Tipo", { exact: true }).selectOption("chords");
+  await page.getByRole("combobox").selectOption("chords");
   await page
     .getByLabel("Enviar arquivos")
     .setInputFiles(path.resolve("tests/fixtures/cifras multiplas.pdf"));
