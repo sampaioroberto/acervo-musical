@@ -21,11 +21,23 @@ for (const width of [390, 1280])
           exact: true,
         }),
       ).toBeVisible();
-      expect(
-        await page
-          .locator("body")
-          .evaluate((el) => el.scrollWidth <= window.innerWidth),
-      ).toBe(true);
+      const layout = await page.locator("body").evaluate((el) => ({
+        viewport: window.innerWidth,
+        body: el.scrollWidth,
+        overflow: [...el.querySelectorAll("*")]
+          .filter(
+            (node) => node.getBoundingClientRect().right > window.innerWidth,
+          )
+          .map((node) => ({
+            tag: node.tagName,
+            className: node.className,
+            right: node.getBoundingClientRect().right,
+            width: node.getBoundingClientRect().width,
+          })),
+      }));
+      expect(layout.body, JSON.stringify(layout)).toBeLessThanOrEqual(
+        layout.viewport,
+      );
       await expect(
         page.getByRole("button", { name: "Gerar PDF" }),
       ).toBeDisabled();
