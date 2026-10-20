@@ -17,9 +17,7 @@ export function changeSelection(
     case "add":
       return state.ids.includes(action.id)
         ? state
-        : state.ids.length >= 4
-          ? { ...state, notice: "Selecione no máximo quatro músicas." }
-          : { ...state, ids: [...state.ids, action.id], notice: null };
+        : { ...state, ids: [...state.ids, action.id], notice: null };
     case "remove":
       return {
         ...state,

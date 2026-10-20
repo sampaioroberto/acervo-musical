@@ -6,6 +6,7 @@ import { makePrintSongs } from "./fixtures";
 import { fixtureFonts } from "./fontFixtures";
 import type { FontFamily } from "../../src/pdf/types";
 import { textFonts } from "./textFonts";
+import { pdfContents } from "./pdfContents";
 for (const family of ["sans", "serif", "mono"] as FontFamily[])
   it("prints four accented lyrics in one A4 page using " + family, async () => {
     const r = await generateLyricsPdf(
@@ -57,7 +58,69 @@ it("finds a smaller font when sixteen does not fit and rejects overflow at nine"
     ],
   });
 });
-it("rejects invalid sizes, counts, mixed kinds and missing glyphs", async () => {
+it.each([1, 2, 3, 5, 8, 9])(
+  "prints %i lyrics in ordered groups of four per A4 sheet",
+  async (count) => {
+    const sample = makePrintSongs("lyrics", "Verso")[0];
+    const songs = Array.from({ length: count }, (_, i) => ({
+      ...sample,
+      id: String(i + 1),
+      title: "Música " + (i + 1),
+    })).reverse();
+    const result = await generateLyricsPdf(
+      songs,
+      { family: "sans", sizing: { mode: "auto" } },
+      fixtureFonts,
+    );
+    expect(result).toMatchObject({ ok: true, pageCount: Math.ceil(count / 4) });
+    if (!result.ok) return;
+    const pages = await pdfContents(result.bytes);
+    expect(pages).toHaveLength(Math.ceil(count / 4));
+    for (const [i, page] of pages.entries()) {
+      const titles = page.filter((part) => part.text.startsWith("Música "));
+      expect(titles.map((t) => t.text)).toEqual(
+        songs.slice(i * 4, i * 4 + 4).map((s) => s.title),
+      );
+      if (titles.length > 1) {
+        expect(titles[0].x).toBeCloseTo(titles[1].x);
+        expect(titles[0].y).toBeGreaterThan(titles[1].y);
+      }
+      if (titles.length > 2)
+        expect(titles[2].x).toBeGreaterThan(titles[0].x + 200);
+    }
+  },
+);
+it("checks fitting and overflow on later lyric sheets", async () => {
+  const sample = makePrintSongs("lyrics", "Verso")[0];
+  const songs = Array.from({ length: 5 }, (_, i) => ({
+    ...sample,
+    id: String(i + 1),
+  }));
+  songs[4].content = "Uma linha da canção\n".repeat(45);
+  const fit = await generateLyricsPdf(
+    songs,
+    { family: "sans", sizing: { mode: "auto" } },
+    fixtureFonts,
+  );
+  expect(fit.ok).toBe(true);
+  if (fit.ok) expect(fit.fontSize).toBeLessThan(16);
+  songs[4].content = "Verso\n".repeat(200);
+  const overflow = await generateLyricsPdf(
+    songs,
+    { family: "sans", sizing: { mode: "auto" } },
+    fixtureFonts,
+  );
+  expect(overflow).toMatchObject({
+    ok: false,
+    issues: [
+      expect.objectContaining({
+        songIds: ["5"],
+        message: expect.stringContaining("página 2"),
+      }),
+    ],
+  });
+});
+it("rejects invalid sizes, empty or duplicate selections, mixed kinds and missing glyphs", async () => {
   for (const size of [8, 17, NaN, 9.5])
     expect(
       (
@@ -71,7 +134,17 @@ it("rejects invalid sizes, counts, mixed kinds and missing glyphs", async () => 
   expect(
     (
       await generateLyricsPdf(
-        makePrintSongs("lyrics", "Verso").slice(0, 3),
+        [],
+        { family: "sans", sizing: { mode: "auto" } },
+        fixtureFonts,
+      )
+    ).ok,
+  ).toBe(false);
+  const duplicate = makePrintSongs("lyrics", "Verso");
+  expect(
+    (
+      await generateLyricsPdf(
+        [duplicate[0], duplicate[0]],
         { family: "sans", sizing: { mode: "auto" } },
         fixtureFonts,
       )

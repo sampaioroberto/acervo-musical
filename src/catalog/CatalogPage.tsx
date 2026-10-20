@@ -84,7 +84,7 @@ export function CatalogPage({
             <div>
               <h2>Músicas</h2>
               <p className="catalog-instruction">
-                Selecione 4 músicas e gere o PDF.
+                Selecione as músicas e gere o PDF.
               </p>
             </div>
             <span className="count-label">
@@ -124,8 +124,8 @@ export function CatalogPage({
           </div>
           <p className="catalog-hint">
             {selection.kind === "lyrics"
-              ? "4 letras em uma folha A4, duas por coluna."
-              : "4 cifras, cada música em uma nova página."}
+              ? "Até 4 letras por folha A4, duas por coluna."
+              : "Cada música começa em uma nova página."}
           </p>
           <div aria-live="polite">
             {status === "loading" && (

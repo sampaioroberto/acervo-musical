@@ -31,6 +31,9 @@ test("reviews a DOCX upload, publishes it and hides administrative forms after l
   await expect(
     page.getByText("Publicado no acervo", { exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("textbox", { name: "Conteúdo", exact: true }),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "Sair", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Entrar na administração" }),
@@ -75,6 +78,15 @@ test("types a lyric on mobile, previews it and publishes without a document", as
   await expect(
     page.getByText("Publicado no acervo", { exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveValue("");
+  await expect(
+    page.getByRole("textbox", { name: "Letra", exact: true }),
+  ).toHaveValue("");
+  await expect(
+    page.getByRole("button", { name: "Publicar", exact: true }),
+  ).toBeDisabled();
   expect(
     await page.evaluate(() => document.body.scrollWidth),
   ).toBeLessThanOrEqual(390);

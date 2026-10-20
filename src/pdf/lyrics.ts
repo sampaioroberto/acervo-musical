@@ -37,8 +37,8 @@ export async function generateLyricsPdf(
   fonts: FontSource,
 ): Promise<PdfResult> {
   if (
-    songs.length !== 4 ||
-    new Set(songs.map((s) => s.id)).size !== 4 ||
+    songs.length === 0 ||
+    new Set(songs.map((s) => s.id)).size !== songs.length ||
     songs.some((s) => s.kind !== "lyrics")
   )
     return {
@@ -47,7 +47,8 @@ export async function generateLyricsPdf(
         {
           code: "selection",
           songIds: [],
-          message: "Escolha quatro letras diferentes para gerar o PDF.",
+          message:
+            "Escolha ao menos uma letra, sem repetir músicas, para gerar o PDF.",
         },
       ],
     };
@@ -112,44 +113,59 @@ export async function composeLyrics(
       : [16, 15, 14, 13, 12, 11, 10, 9];
   let issues: PdfIssue[] = [];
   for (const size of sizes) {
-    const columns = [normalized.slice(0, 2), normalized.slice(2, 4)].map(
-      (group) => group.map((song) => songBlock(song, font, bold, size, width)),
-    );
+    const sheets = [];
     issues = [];
-    columns.forEach((blocks, column) => {
-      if (
-        blocks.reduce((h, b) => h + b.height, 0) +
-          Math.max(0, blocks.length - 1) * mm(6) >
-        available
-      )
-        issues.push({
-          code: "overflow",
-          column: column as 0 | 1,
-          songIds: normalized
-            .slice(column * 2, column * 2 + 2)
-            .map((s) => s.id),
-          message:
-            "As músicas da coluna " +
-            (column === 0 ? "esquerda" : "direita") +
-            " não cabem. Reduza a fonte, use o ajuste automático ou revise a seleção.",
-        });
-    });
+    for (let offset = 0; offset < normalized.length; offset += 4) {
+      const groups = [
+        normalized.slice(offset, offset + 2),
+        normalized.slice(offset + 2, offset + 4),
+      ];
+      const columns = groups.map((group) =>
+        group.map((song) => songBlock(song, font, bold, size, width)),
+      );
+      sheets.push(columns);
+      columns.forEach((blocks, column) => {
+        if (
+          blocks.reduce((h, b) => h + b.height, 0) +
+            Math.max(0, blocks.length - 1) * mm(6) >
+          available
+        )
+          issues.push({
+            code: "overflow",
+            column: column as 0 | 1,
+            songIds: groups[column].map((s) => s.id),
+            message:
+              "As músicas da coluna " +
+              (column === 0 ? "esquerda" : "direita") +
+              " da página " +
+              (offset / 4 + 1) +
+              " não cabem. Reduza a fonte, use o ajuste automático ou revise a seleção.",
+          });
+      });
+    }
     if (issues.length) continue;
-    const page = doc.addPage([PAGE.width, PAGE.height]);
-    columns.forEach((blocks, col) => {
-      let top = PAGE.height - PAGE.margin;
-      for (const block of blocks) {
-        drawLines(
-          page,
-          font,
-          block.lines,
-          PAGE.margin + col * (width + PAGE.gutter),
-          top,
-        );
-        top -= block.height + mm(6);
-      }
-    });
-    return { ok: true, bytes: await doc.save(), pageCount: 1, fontSize: size };
+    for (const columns of sheets) {
+      const page = doc.addPage([PAGE.width, PAGE.height]);
+      columns.forEach((blocks, col) => {
+        let top = PAGE.height - PAGE.margin;
+        for (const block of blocks) {
+          drawLines(
+            page,
+            font,
+            block.lines,
+            PAGE.margin + col * (width + PAGE.gutter),
+            top,
+          );
+          top -= block.height + mm(6);
+        }
+      });
+    }
+    return {
+      ok: true,
+      bytes: await doc.save(),
+      pageCount: sheets.length,
+      fontSize: size,
+    };
   }
   return { ok: false, issues };
 }

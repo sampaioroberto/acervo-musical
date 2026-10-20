@@ -62,7 +62,7 @@ export function SinglePreview({
           <>
             <p className="catalog-hint">
               {song.kind === "lyrics"
-                ? "Uma letra por vez. No PDF final, duas letras por coluna."
+                ? "Uma letra por vez. No PDF final, até duas letras por coluna."
                 : "Confira os acordes e as quebras de página."}
             </p>
             <PdfPreview bytes={result.bytes} />

@@ -7,8 +7,8 @@ export async function generateChordsPdf(
   fonts: FontSource,
 ): Promise<PdfResult> {
   if (
-    songs.length !== 4 ||
-    new Set(songs.map((s) => s.id)).size !== 4 ||
+    songs.length === 0 ||
+    new Set(songs.map((s) => s.id)).size !== songs.length ||
     songs.some((s) => s.kind !== "chords")
   )
     return {
@@ -17,7 +17,8 @@ export async function generateChordsPdf(
         {
           code: "selection",
           songIds: [],
-          message: "Escolha quatro cifras diferentes para gerar o PDF.",
+          message:
+            "Escolha ao menos uma cifra, sem repetir músicas, para gerar o PDF.",
         },
       ],
     };

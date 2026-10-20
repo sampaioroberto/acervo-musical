@@ -40,6 +40,6 @@ for (const width of [390, 1280])
       );
       await expect(
         page.getByRole("button", { name: "Gerar PDF" }),
-      ).toBeDisabled();
+      ).toBeEnabled();
     },
   );

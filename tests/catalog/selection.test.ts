@@ -9,10 +9,14 @@ const full: SelectionState = {
   notice: null,
 };
 describe("selection", () => {
-  it("rejects fifth and duplicate entries", () => {
-    expect(changeSelection(full, { type: "add", id: "5" }).ids).toEqual(
-      full.ids,
-    );
+  it("accepts more than four songs, preserving order and rejecting duplicates", () => {
+    expect(changeSelection(full, { type: "add", id: "5" }).ids).toEqual([
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+    ]);
     expect(changeSelection(full, { type: "add", id: "1" }).ids).toEqual(
       full.ids,
     );

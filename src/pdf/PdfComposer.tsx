@@ -41,8 +41,8 @@ export function PdfComposer({
         <div className="composer-options">
           <p className="composition-format">
             {lyrics
-              ? "4 letras · 1 folha A4"
-              : "4 cifras · Uma música por página"}
+              ? `${songs.length} ${songs.length === 1 ? "letra" : "letras"} · ${Math.ceil(songs.length / 4)} ${songs.length <= 4 ? "folha A4" : "folhas A4"}`
+              : `${songs.length} ${songs.length === 1 ? "cifra" : "cifras"} · Cada música em uma nova página`}
           </p>
           <ol className="composition-songs">
             {songs.map((s) => (

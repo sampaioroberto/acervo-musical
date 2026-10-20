@@ -116,10 +116,21 @@ export function AdminWorkspace({
     }
   }
   async function saveOne(item: ImportItem, status: SongStatus) {
+    setNotice("");
     patch(item.id, { status: "saving", error: null });
     try {
       await saveImport(item, status, repo);
-      patch(item.id, { status: "saved", savedAs: status });
+      if (status === "published") {
+        const next = item.file ? null : createManualItem(item.draft.kind);
+        setItems((current) =>
+          current.flatMap((entry) =>
+            entry.id !== item.id ? [entry] : next ? [next] : [],
+          ),
+        );
+        setNotice("Publicado no acervo");
+      } else {
+        patch(item.id, { status: "saved", savedAs: status });
+      }
       await reload();
       return true;
     } catch (e) {
@@ -260,6 +271,11 @@ export function AdminWorkspace({
               {e}
             </p>
           ))}
+          {notice && (
+            <p className="success status" role="status">
+              {notice}
+            </p>
+          )}
           {items.length > 0 && (
             <div className="batch-review">
               <div className="batch-heading">
@@ -310,11 +326,6 @@ export function AdminWorkspace({
                   Publicar revisados
                 </button>
               </div>
-              {notice && (
-                <p className="success status" role="status">
-                  {notice}
-                </p>
-              )}
             </div>
           )}
         </section>

@@ -47,6 +47,14 @@ const songs = [
   ...(await demo.listPublished({ kind: "lyrics", search: "" })),
   ...(await demo.listPublished({ kind: "chords", search: "" })),
 ];
+const lyricSample = songs.find((song) => song.kind === "lyrics");
+songs.push(
+  ...Array.from({ length: 5 }, (_, i) => ({
+    ...lyricSample,
+    title: "Letra extra " + (i + 5),
+    content: "Verso de teste\n\nOutra estrofe",
+  })),
+);
 const rows = songs.map((song, i) => ({
   id: "00000000-0000-4000-8000-" + String(i + 1).padStart(12, "0"),
   title: song.title,

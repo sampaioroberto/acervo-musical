@@ -1,4 +1,4 @@
-import { it, expect } from "vitest";
+import { it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CatalogPage } from "../../src/catalog/CatalogPage";
 import { createDemoRepository } from "../../src/catalog/demoRepository";
@@ -23,6 +23,41 @@ it("searches title and artist without accents and exposes four selections", asyn
   expect(
     await screen.findByText("Nenhuma música encontrada."),
   ).toBeInTheDocument();
+});
+it("generates from one song and keeps all six selections in the chosen order", async () => {
+  const [sample] = await createDemoRepository().listPublished({
+    kind: "lyrics",
+    search: "",
+  });
+  const songs = Array.from({ length: 6 }, (_, i) => ({
+    ...sample,
+    id: String(i + 1),
+    title: "Música " + (i + 1),
+  }));
+  const compose = vi.fn();
+  render(
+    <CatalogPage
+      repository={{ listPublished: async () => songs }}
+      onCompose={compose}
+    />,
+  );
+  const buttons = await screen.findAllByRole("button", { name: /Selecionar / });
+  fireEvent.click(buttons[0]);
+  expect(screen.getByRole("button", { name: /Gerar PDF/ })).toBeEnabled();
+  buttons.slice(1).forEach((b) => fireEvent.click(b));
+  expect(screen.getAllByRole("button", { name: /Retirar / })).toHaveLength(6);
+  fireEvent.click(screen.getByRole("button", { name: "Subir Música 5" }));
+  fireEvent.click(screen.getByRole("button", { name: /Gerar PDF/ }));
+  expect(compose.mock.calls[0][0].map((s: { id: string }) => s.id)).toEqual([
+    "1",
+    "2",
+    "3",
+    "5",
+    "4",
+    "6",
+  ]);
+  fireEvent.click(screen.getByRole("button", { name: "Limpar seleção" }));
+  expect(screen.getByRole("button", { name: /Gerar PDF/ })).toBeDisabled();
 });
 it("offers retry after a load failure", async () => {
   let count = 0;

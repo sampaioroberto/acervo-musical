@@ -22,13 +22,10 @@ export function SelectionPanel({
           <h2>Sua seleção</h2>
           <p>Ordem no PDF</p>
         </div>
-        <span className="selection-count">
-          {songs.length}
-          <small>/4</small>
-        </span>
+        <span className="selection-count">{songs.length}</span>
       </div>
       <div className="selection-slots">
-        {Array.from({ length: 4 }, (_, i) => {
+        {Array.from({ length: Math.max(1, songs.length) }, (_, i) => {
           const song = songs[i];
           return (
             <div
@@ -80,20 +77,16 @@ export function SelectionPanel({
       )}
       <button
         className="button primary generate"
-        disabled={songs.length !== 4}
+        disabled={songs.length === 0}
         onClick={() => onCompose(songs)}
       >
         <FileDown size={18} />
         Gerar PDF<span>→</span>
       </button>
       <p className="selection-help">
-        {songs.length < 4
-          ? "Selecione " +
-            (4 - songs.length) +
-            " música" +
-            (songs.length === 3 ? "" : "s") +
-            " para continuar."
-          : "Confira a prévia antes de baixar."}
+        {songs.length === 0
+          ? "Selecione ao menos uma música."
+          : "Use as setas para mudar a ordem."}
       </p>
       {songs.length > 0 && (
         <button

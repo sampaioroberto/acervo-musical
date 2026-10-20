@@ -3,7 +3,7 @@ import { it, expect } from "vitest";
 import { previewSongPdf } from "../../src/pdf/previewSong";
 import { generateLyricsPdf } from "../../src/pdf/lyrics";
 import { fixtureFonts } from "../pdf/fontFixtures";
-it("allows a single administrative preview without relaxing public selection rules", async () => {
+it("allows a single song in both administrative preview and public PDF", async () => {
   const song = {
     title: "Canção",
     artist: "",
@@ -25,5 +25,5 @@ it("allows a single administrative preview without relaxing public selection rul
         fixtureFonts,
       )
     ).ok,
-  ).toBe(false);
+  ).toBe(true);
 });

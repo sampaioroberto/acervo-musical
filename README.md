@@ -4,11 +4,12 @@ Site para organizar letras e cifras e gerar PDFs para impressão. Os visitantes 
 
 ## Funcionalidades
 
-- Busca por título e artista, com seleção e ordenação de quatro músicas.
-- Letras: uma folha A4 vertical, com duas músicas em cada coluna. Noto Sans, Noto Serif ou Noto Sans Mono; fonte de 9 a 16 pontos, manual ou automática, com bloqueio quando não cabe.
+- Busca por título e artista, com seleção e ordenação de uma ou mais músicas.
+- Letras: até quatro por folha A4 vertical, com até duas em cada coluna. A quinta inicia outra folha. Noto Sans, Noto Serif ou Noto Sans Mono; fonte de 9 a 16 pontos, manual ou automática, com bloqueio quando não cabe.
 - Cifras: cada música começa em uma nova página, com espaços preservados e fonte monoespaçada. Uma cifra longa pode ocupar mais páginas.
 - Prévia do próprio PDF e download no navegador.
 - Upload múltiplo DOCX/PDF: até 20 arquivos de 10 MiB; uma música por arquivo, revisão editável e publicação explícita.
+- Cadastro manual de letras e cifras, com título em negrito na tela e no PDF. Após publicar, o formulário é limpo para a próxima música.
 - Acervo público no Supabase com rascunhos e arquivos originais privados. As regras do banco autorizam apenas a conta administrativa.
 
 ## Executar localmente
