@@ -29,6 +29,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
+}
+.add-methods {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 18px;
 }
 .batch-kind select {
@@ -160,6 +167,12 @@
   white-space: pre-wrap;
   overflow-wrap: normal;
 }
+.song-fields .song-title-input {
+  font-size: 18px;
+  font-weight: 700;
+  border-left: 3px solid var(--green);
+  background: #f0f4eb;
+}
 .song-fields textarea.mono {
   white-space: pre;
   overflow: auto;
@@ -253,7 +266,7 @@
 .admin-record h3 {
   font-family: Georgia, serif;
   font-size: 19px;
-  font-weight: 400;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 .admin-record p {

@@ -6,7 +6,12 @@ export const PAGE = {
   margin: mm(12),
   gutter: mm(8),
 };
-export type TextLine = { text: string; size: number; top: number };
+export type TextLine = {
+  text: string;
+  size: number;
+  top: number;
+  font?: PDFFont;
+};
 export function wrapText(
   text: string,
   font: PDFFont,
@@ -54,7 +59,12 @@ export function textBlock(
 ): { lines: TextLine[]; height: number } {
   const strings = wrap ? wrapText(text, font, size, width) : text.split("\n");
   return {
-    lines: strings.map((text, i) => ({ text, size, top: i * size * 1.2 })),
+    lines: strings.map((text, i) => ({
+      text,
+      size,
+      top: i * size * 1.2,
+      font,
+    })),
     height: (strings.length - 1) * size * 1.2 + font.heightAtSize(size),
   };
 }
@@ -65,12 +75,17 @@ export function drawLines(
   x: number,
   top: number,
 ) {
-  for (const line of lines)
+  for (const line of lines) {
+    const lineFont = line.font ?? font;
     if (line.text)
       page.drawText(line.text, {
         x,
-        y: top - line.top - font.heightAtSize(line.size, { descender: false }),
-        font,
+        y:
+          top -
+          line.top -
+          lineFont.heightAtSize(line.size, { descender: false }),
+        font: lineFont,
         size: line.size,
       });
+  }
 }

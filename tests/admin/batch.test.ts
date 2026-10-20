@@ -1,5 +1,9 @@
 import { it, expect } from "vitest";
-import { createImportItem, duplicateIds } from "../../src/admin/batch";
+import {
+  createImportItem,
+  createManualItem,
+  duplicateIds,
+} from "../../src/admin/batch";
 it("creates one stable import identity with an opaque path independent of filename", () => {
   const item = createImportItem(
     new File(["%PDF-"], "Minha música.PDF"),
@@ -9,6 +13,15 @@ it("creates one stable import identity with an opaque path independent of filena
   expect(item.original.path).toBe(item.id + "/original.pdf");
   expect(item.draft.title).toBe("Minha música");
   expect(item.reviewed).toBe(false);
+});
+it("does not warn about duplicates until a manual title is filled", () => {
+  const a = createManualItem("lyrics"),
+    b = createManualItem("lyrics");
+  b.draft.title = "   ";
+  expect([...duplicateIds([], [a, b])]).toEqual([]);
+  a.draft.title = "Canção";
+  b.draft.title = "Cancao";
+  expect([...duplicateIds([], [a, b])]).toEqual([a.id, b.id]);
 });
 it("warns about normalized duplicates in the catalog and within the batch", () => {
   const a = createImportItem(new File(["x"], "Canção.pdf"), "lyrics");

@@ -42,7 +42,7 @@ export async function composeChords(
       ],
     };
   }
-  const { doc, font } = context;
+  const { doc, font, bold } = context;
   const width = PAGE.width - 2 * PAGE.margin;
   const normalized = songs.map((s) => ({
     ...s,
@@ -50,7 +50,13 @@ export async function composeChords(
     artist: normalizeText(s.artist),
     content: normalizeText(s.content),
   }));
-  const glyphs = unsupportedGlyphs(normalized, font);
+  const glyphs = [
+    ...unsupportedGlyphs(normalized, font),
+    ...unsupportedGlyphs(
+      normalized.map((s) => ({ ...s, artist: "", content: "" })),
+      bold,
+    ),
+  ];
   if (glyphs.length) return { ok: false, issues: glyphs };
   const wide = normalized.filter((s) =>
     s.content
@@ -72,7 +78,7 @@ export async function composeChords(
   const heading = (song: PrintSong, continuation: boolean) => {
     const title = textBlock(
       song.title + (continuation ? " (continuação)" : ""),
-      font,
+      bold,
       13.2,
       width,
     );

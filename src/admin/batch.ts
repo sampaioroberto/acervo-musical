@@ -8,8 +8,8 @@ import { searchable } from "../catalog/search";
 import { fileKind, DOCX_MIME } from "../import/validate";
 export type ImportItem = {
   id: string;
-  file: File;
-  original: OriginalRef;
+  file: File | null;
+  original: OriginalRef | null;
   draft: SongDraft;
   reviewed: boolean;
   status: "importing" | "review" | "saving" | "saved" | "error";
@@ -18,7 +18,10 @@ export type ImportItem = {
   attachOriginal?: boolean;
   savedAs?: SongStatus;
 };
-export function createImportItem(file: File, kind: SongKind): ImportItem {
+export function createImportItem(
+  file: File,
+  kind: SongKind,
+): ImportItem & { file: File; original: OriginalRef } {
   const id = crypto.randomUUID(),
     ext = fileKind(file) ?? "pdf";
   return {
@@ -44,6 +47,19 @@ export function createImportItem(file: File, kind: SongKind): ImportItem {
     attachOriginal: true,
   };
 }
+export function createManualItem(kind: SongKind): ImportItem {
+  return {
+    id: crypto.randomUUID(),
+    file: null,
+    original: null,
+    draft: { title: "", artist: "", kind, content: "" },
+    reviewed: false,
+    status: "review",
+    error: null,
+    warnings: [],
+    attachOriginal: false,
+  };
+}
 export function duplicateIds(
   records: readonly (SongDraft & { id?: string })[],
   items: readonly ImportItem[],
@@ -52,6 +68,7 @@ export function duplicateIds(
     JSON.stringify([searchable(s.title), searchable(s.artist), s.kind]);
   return new Set(
     items
+      .filter((item) => item.draft.title.trim())
       .filter(
         (item) =>
           records.some((s) => s.id !== item.id && key(s) === key(item.draft)) ||

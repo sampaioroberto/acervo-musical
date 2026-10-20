@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Upload, LogOut, Pencil, Trash2, FileText } from "lucide-react";
+import {
+  Upload,
+  LogOut,
+  Pencil,
+  Trash2,
+  FileText,
+  PenLine,
+} from "lucide-react";
 import type { AdminRepository } from "../catalog/repository";
 import type {
   AdminSong,
@@ -7,7 +14,12 @@ import type {
   SongKind,
   SongStatus,
 } from "../catalog/types";
-import { createImportItem, duplicateIds, type ImportItem } from "./batch";
+import {
+  createImportItem,
+  createManualItem,
+  duplicateIds,
+  type ImportItem,
+} from "./batch";
 import { saveImport } from "./saveImport";
 import { validateFiles } from "../import/validate";
 import { importFile } from "../import/importFile";
@@ -202,22 +214,32 @@ export function AdminWorkspace({
               <h2>Adicionar músicas</h2>
             </div>
           </div>
-          <label className="batch-kind">
-            Tipo
-            <select
-              value={kind}
-              onChange={(e) => setKind(e.target.value as SongKind)}
+          <div className="add-methods">
+            <label className="batch-kind">
+              Tipo
+              <select
+                value={kind}
+                onChange={(e) => setKind(e.target.value as SongKind)}
+                disabled={locked}
+              >
+                <option value="lyrics">Letras</option>
+                <option value="chords">Cifras</option>
+              </select>
+            </label>
+            <button
+              className="button secondary"
               disabled={locked}
+              onClick={() => {
+                setItems((current) => [...current, createManualItem(kind)]);
+                setNotice("");
+              }}
             >
-              <option value="lyrics">Letras</option>
-              <option value="chords">Cifras</option>
-            </select>
-          </label>
+              <PenLine size={16} /> Digitar
+            </button>
+          </div>
           <label className={"upload-zone " + (locked ? "is-busy" : "")}>
             <Upload size={29} strokeWidth={1.3} />
-            <strong>
-              {busy ? "Lendo arquivos…" : "Enviar arquivos"}
-            </strong>
+            <strong>{busy ? "Lendo arquivos…" : "Enviar arquivos"}</strong>
             <span>DOCX ou PDF · Até 20 arquivos de 10 MiB cada</span>
             <small>Um arquivo por música.</small>
             <input
@@ -242,7 +264,7 @@ export function AdminWorkspace({
             <div className="batch-review">
               <div className="batch-heading">
                 <h3>
-                  Revisão do lote <span>{items.length}</span>
+                  Músicas para salvar <span>{items.length}</span>
                 </h3>
                 <button
                   className="text-button"

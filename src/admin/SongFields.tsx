@@ -4,10 +4,14 @@ export function SongFields({
   value,
   onChange,
   disabled = false,
+  contentLabel = "Conteúdo",
+  autoFocusTitle = false,
 }: {
   value: SongDraft;
   onChange: (s: SongDraft) => void;
   disabled?: boolean;
+  contentLabel?: string;
+  autoFocusTitle?: boolean;
 }) {
   const id = useId();
   return (
@@ -17,6 +21,8 @@ export function SongFields({
           Título
           <input
             id={id + "title"}
+            className="song-title-input"
+            autoFocus={autoFocusTitle}
             value={value.title}
             onChange={(e) => onChange({ ...value, title: e.target.value })}
             required
@@ -48,7 +54,7 @@ export function SongFields({
         </select>
       </label>
       <label htmlFor={id + "content"}>
-        Conteúdo
+        {contentLabel}
         <textarea
           id={id + "content"}
           className={value.kind === "chords" ? "mono" : ""}

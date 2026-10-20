@@ -37,7 +37,7 @@ export async function saveImport(
     saved.status === status;
   try {
     const previous = await repo.getAdmin(item.id);
-    if (original && !previous?.original) {
+    if (original && item.file && !previous?.original) {
       uploadAttempted = true;
       await repo.uploadOriginal(original, item.file);
     }

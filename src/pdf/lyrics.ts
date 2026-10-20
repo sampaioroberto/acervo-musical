@@ -11,18 +11,19 @@ import type { PDFFont } from "pdf-lib";
 function songBlock(
   song: PrintSong,
   font: PDFFont,
+  bold: PDFFont,
   size: number,
   width: number,
 ) {
   const lines: TextLine[] = [];
   let height = 0;
-  for (const [text, scale] of [
-    [song.title, 1.2],
-    [song.artist, 0.9],
-    [song.content, 1],
+  for (const [text, scale, textFont] of [
+    [song.title, 1.2, bold],
+    [song.artist, 0.9, font],
+    [song.content, 1, font],
   ] as const) {
     if (!text) continue;
-    const block = textBlock(text, font, size * scale, width);
+    const block = textBlock(text, textFont, size * scale, width);
     lines.push(
       ...block.lines.map((line) => ({ ...line, top: line.top + height })),
     );
@@ -88,14 +89,20 @@ export async function composeLyrics(
       ],
     };
   }
-  const { doc, font } = context;
+  const { doc, font, bold } = context;
   const normalized = songs.map((s) => ({
     ...s,
     title: s.title.normalize("NFC"),
     artist: s.artist.normalize("NFC"),
     content: s.content.normalize("NFC"),
   }));
-  const unsupported = unsupportedGlyphs(normalized, font);
+  const unsupported = [
+    ...unsupportedGlyphs(normalized, font),
+    ...unsupportedGlyphs(
+      normalized.map((s) => ({ ...s, artist: "", content: "" })),
+      bold,
+    ),
+  ];
   if (unsupported.length) return { ok: false, issues: unsupported };
   const width = (PAGE.width - 2 * PAGE.margin - PAGE.gutter) / 2,
     available = PAGE.height - 2 * PAGE.margin;
@@ -106,7 +113,7 @@ export async function composeLyrics(
   let issues: PdfIssue[] = [];
   for (const size of sizes) {
     const columns = [normalized.slice(0, 2), normalized.slice(2, 4)].map(
-      (group) => group.map((song) => songBlock(song, font, size, width)),
+      (group) => group.map((song) => songBlock(song, font, bold, size, width)),
     );
     issues = [];
     columns.forEach((blocks, column) => {

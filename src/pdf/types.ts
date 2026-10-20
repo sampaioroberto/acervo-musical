@@ -5,7 +5,11 @@ export type LyricOptions = {
   family: FontFamily;
   sizing: { mode: "auto" } | { mode: "manual"; size: number };
 };
-export type FontSource = (family: FontFamily) => Promise<Uint8Array>;
+export type FontWeight = "regular" | "bold";
+export type FontSource = (
+  family: FontFamily,
+  weight?: FontWeight,
+) => Promise<Uint8Array>;
 export type PdfIssue = {
   code:
     | "selection"

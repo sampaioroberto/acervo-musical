@@ -2,13 +2,17 @@ import { PDFDocument, type PDFFont } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import type { FontFamily, FontSource, PrintSong, PdfIssue } from "./types";
 const names = { sans: "NotoSans", serif: "NotoSerif", mono: "NotoSansMono" };
-const cache = new Map<FontFamily, Promise<Uint8Array>>();
-export const browserFonts: FontSource = (family) => {
-  if (!cache.has(family))
+const cache = new Map<string, Promise<Uint8Array>>();
+export const browserFonts: FontSource = (family, weight = "regular") => {
+  const key = family + "-" + weight;
+  if (!cache.has(key))
     cache.set(
-      family,
+      key,
       fetch(
-        import.meta.env.BASE_URL + "fonts/" + names[family] + "-Regular.ttf",
+        import.meta.env.BASE_URL +
+          "fonts/" +
+          names[family] +
+          (weight === "bold" ? "-Bold.ttf" : "-Regular.ttf"),
       )
         .then((r) => {
           if (!r.ok) throw new Error("Não foi possível carregar a fonte.");
@@ -16,17 +20,22 @@ export const browserFonts: FontSource = (family) => {
         })
         .then((b) => new Uint8Array(b))
         .catch((e) => {
-          cache.delete(family);
+          cache.delete(key);
           throw e;
         }),
     );
-  return cache.get(family)!;
+  return cache.get(key)!;
 };
 export async function createPdfFont(fonts: FontSource, family: FontFamily) {
   const doc = await PDFDocument.create();
   doc.registerFontkit(fontkit);
-  const font = await doc.embedFont(await fonts(family), { subset: true });
-  return { doc, font };
+  const [regularBytes, boldBytes] = await Promise.all([
+    fonts(family, "regular"),
+    fonts(family, "bold"),
+  ]);
+  const font = await doc.embedFont(regularBytes, { subset: true });
+  const bold = await doc.embedFont(boldBytes, { subset: true });
+  return { doc, font, bold };
 }
 export function unsupportedGlyphs(
   songs: readonly PrintSong[],

@@ -22,7 +22,7 @@ export function ImportReview({
   const valid = !!item.draft.title.trim() && !!item.draft.content.trim();
   return (
     <fieldset className="import-review" disabled={locked}>
-      <legend>{item.file.name}</legend>
+      <legend>{item.file?.name ?? "Nova música"}</legend>
       <div className="import-state">
         {item.status === "importing" ? (
           "Extraindo o conteúdo…"
@@ -42,7 +42,7 @@ export function ImportReview({
       {item.error && (
         <p className="error" role="alert">
           {item.error}
-          {item.attachOriginal === false
+          {item.file && item.attachOriginal === false
             ? " Você pode cadastrar a música colando o texto abaixo. O arquivo original não será anexado."
             : ""}
         </p>
@@ -61,6 +61,14 @@ export function ImportReview({
       <SongFields
         value={item.draft}
         disabled={locked}
+        autoFocusTitle={!item.file}
+        contentLabel={
+          item.file
+            ? "Conteúdo"
+            : item.draft.kind === "lyrics"
+              ? "Letra"
+              : "Cifra"
+        }
         onChange={(draft) =>
           onChange({ draft, reviewed: false, status: "review" })
         }

@@ -5,6 +5,7 @@ import { generateLyricsPdf } from "../../src/pdf/lyrics";
 import { makePrintSongs } from "./fixtures";
 import { fixtureFonts } from "./fontFixtures";
 import type { FontFamily } from "../../src/pdf/types";
+import { textFonts } from "./textFonts";
 for (const family of ["sans", "serif", "mono"] as FontFamily[])
   it("prints four accented lyrics in one A4 page using " + family, async () => {
     const r = await generateLyricsPdf(
@@ -18,6 +19,9 @@ for (const family of ["sans", "serif", "mono"] as FontFamily[])
     expect(pdf.getPageCount()).toBe(1);
     expect(pdf.getPage(0).getWidth()).toBeCloseTo(595.2756, 3);
     expect(pdf.getPage(0).getHeight()).toBeCloseTo(841.8898, 3);
+    const fonts = textFonts(pdf);
+    expect(fonts[0]).toContain("Bold");
+    expect(fonts[1]).toContain("Regular");
   });
 it("finds a smaller font when sixteen does not fit and rejects overflow at nine", async () => {
   const songs = makePrintSongs(
