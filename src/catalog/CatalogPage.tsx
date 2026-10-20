@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { Search, Plus, Check, Music2, BookOpen } from "lucide-react";
+import { Search, Plus, Check, Music2, BookOpen, Eye } from "lucide-react";
 import type { CatalogRepository } from "./repository";
 import type { Song, SongKind } from "./types";
 import { changeSelection } from "./selection";
@@ -165,6 +165,7 @@ export function CatalogPage({
                       </div>
                       <button
                         className="song-title-button"
+                        aria-label={`${expanded === song.id ? "Ocultar" : "Visualizar"} ${song.kind === "lyrics" ? "letra" : "cifra"} de ${song.title}`}
                         onClick={() =>
                           setExpanded(expanded === song.id ? null : song.id)
                         }
@@ -172,6 +173,11 @@ export function CatalogPage({
                       >
                         <h3>{song.title}</h3>
                         {song.artist && <span>{song.artist}</span>}
+                        <span className="read-song">
+                          <Eye size={13} />
+                          {expanded === song.id ? "Ocultar" : "Visualizar"}{" "}
+                          {song.kind === "lyrics" ? "letra" : "cifra"}
+                        </span>
                       </button>
                       <span className="type-pill">
                         {song.kind === "lyrics" ? "Letra" : "Cifra"}

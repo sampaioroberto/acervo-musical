@@ -6,6 +6,7 @@ import type {
 } from "../catalog/types";
 import { searchable } from "../catalog/search";
 import { fileKind, DOCX_MIME } from "../import/validate";
+import type { PdfImportPage } from "../import/pdfPages";
 export type ImportItem = {
   id: string;
   file: File | null;
@@ -17,6 +18,14 @@ export type ImportItem = {
   warnings: string[];
   attachOriginal?: boolean;
   savedAs?: SongStatus;
+  saveAttempted?: boolean;
+  pdf?: {
+    sourceId: string;
+    sourceName: string;
+    pages: PdfImportPage[];
+    baseline: SongDraft;
+    editedBeforeMerge?: boolean;
+  };
 };
 export function createImportItem(
   file: File,

@@ -370,6 +370,16 @@ h1 em {
   display: block;
   margin-top: 5px;
 }
+.song-title-button .read-song {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--green);
+  font-size: 11px;
+  margin-top: 8px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .type-pill {
   font-size: 9px;
   color: #748462;

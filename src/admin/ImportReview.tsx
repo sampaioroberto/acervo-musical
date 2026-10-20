@@ -10,12 +10,18 @@ export function ImportReview({
   busy,
   onChange,
   onSave,
+  onJoin,
+  onSplit,
+  continuation = false,
 }: {
   item: ImportItem;
   duplicate: boolean;
   busy: boolean;
   onChange: (patch: Partial<ImportItem>) => void;
   onSave: (status: SongStatus) => void;
+  onJoin?: () => void;
+  onSplit?: () => void;
+  continuation?: boolean;
 }) {
   const [preview, setPreview] = useState<SongDraft | null>(null);
   const locked = busy || ["importing", "saving", "saved"].includes(item.status);
@@ -39,6 +45,42 @@ export function ImportReview({
           "Confira o conteúdo antes de salvar."
         )}
       </div>
+      {item.pdf && (
+        <div className="pdf-page-actions">
+          <p className="pdf-source">
+            {item.pdf.sourceName} ·{" "}
+            {item.pdf.pages.length === 1 ? "página " : "páginas "}
+            {item.pdf.pages.map((p) => p.number).join(", ")}
+          </p>
+          {continuation && (
+            <p className="warning">
+              A próxima página pode ser continuação desta cifra.
+            </p>
+          )}
+          <div className="form-actions">
+            {onJoin && (
+              <button
+                className="button secondary"
+                type="button"
+                onClick={onJoin}
+                disabled={locked}
+              >
+                Juntar com a próxima página
+              </button>
+            )}
+            {onSplit && (
+              <button
+                className="button secondary"
+                type="button"
+                onClick={onSplit}
+                disabled={locked}
+              >
+                Separar páginas
+              </button>
+            )}
+          </div>
+        </div>
+      )}
       {item.error && (
         <p className="error" role="alert">
           {item.error}

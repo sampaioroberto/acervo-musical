@@ -45,6 +45,98 @@ test("reviews a DOCX upload, publishes it and hides administrative forms after l
   ).toBeVisible();
 });
 
+test("separates PDF chord pages, joins a continuation and lets visitors consult the result", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./#/admin");
+  await page
+    .getByRole("textbox", { name: "E-mail", exact: true })
+    .fill("admin@acervo.local.test");
+  await page
+    .getByLabel("Senha", { exact: true })
+    .fill("Local-Musical-Test-2026!");
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await page.getByLabel("Tipo", { exact: true }).selectOption("chords");
+  await page
+    .getByLabel("Enviar arquivos")
+    .setInputFiles(path.resolve("tests/fixtures/cifras multiplas.pdf"));
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(3);
+  await expect(
+    page.getByText("A próxima página pode ser continuação desta cifra."),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Juntar com a próxima página", exact: true })
+    .first()
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(2);
+  await page
+    .getByRole("button", { name: "Separar páginas", exact: true })
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(3);
+  await page
+    .getByRole("button", { name: "Juntar com a próxima página", exact: true })
+    .first()
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(2);
+  await expect(
+    page.getByRole("textbox", { name: "Conteúdo", exact: true }).first(),
+  ).toHaveValue(/Mais um verso para cantar/);
+  await page
+    .getByRole("checkbox", {
+      name: "Conferi o texto, as quebras de linha e o alinhamento.",
+    })
+    .first()
+    .check();
+  await page
+    .getByRole("button", { name: "Publicar", exact: true })
+    .first()
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveValue("Outra manhã");
+  await page
+    .getByRole("checkbox", {
+      name: "Conferi o texto, as quebras de linha e o alinhamento.",
+    })
+    .check();
+  await page.getByRole("button", { name: "Publicar", exact: true }).click();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Sair", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Entrar na administração" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Acervo", exact: true }).click();
+  await page.getByRole("button", { name: "Cifras", exact: true }).click();
+  await page.getByRole("searchbox").fill("Canção do encontro");
+  await page
+    .getByRole("button", {
+      name: "Visualizar cifra de Canção do encontro",
+      exact: true,
+    })
+    .click();
+  await expect(page.locator("pre.song-content")).toContainText(
+    "Vamos cantar juntos",
+  );
+  await expect(page.locator("pre.song-content")).toContainText(
+    "Mais um verso para cantar",
+  );
+  await expect(page.getByRole("button", { name: "Gerar PDF" })).toBeDisabled();
+  expect(
+    await page.evaluate(() => document.body.scrollWidth),
+  ).toBeLessThanOrEqual(390);
+});
+
 test("types a lyric on mobile, previews it and publishes without a document", async ({
   page,
 }) => {
@@ -96,6 +188,8 @@ test("types a lyric on mobile, previews it and publishes without a document", as
   ).toBeVisible();
   await page.getByRole("link", { name: "Acervo", exact: true }).click();
   await page.getByRole("searchbox").fill(title);
-  await page.getByRole("button", { name: title, exact: true }).click();
+  await page
+    .getByRole("button", { name: "Visualizar letra de " + title, exact: true })
+    .click();
   await expect(page.locator("pre.song-content")).toHaveText(content);
 });

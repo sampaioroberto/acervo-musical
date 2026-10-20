@@ -132,6 +132,14 @@
   color: #82956f;
   margin-bottom: 18px;
 }
+.pdf-page-actions {
+  margin: 0 0 20px;
+}
+.pdf-source {
+  font-size: 11px;
+  color: #687e5a;
+  overflow-wrap: anywhere;
+}
 .song-fields label,
 .login-card label {
   display: block;

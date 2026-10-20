@@ -3,6 +3,30 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CatalogPage } from "../../src/catalog/CatalogPage";
 import { createDemoRepository } from "../../src/catalog/demoRepository";
 import { readConfig } from "../../src/app/config";
+it("lets visitors read lyrics and chords without selecting songs or generating a PDF", async () => {
+  render(
+    <CatalogPage repository={createDemoRepository()} onCompose={() => {}} />,
+  );
+  fireEvent.click(
+    await screen.findByRole("button", {
+      name: "Visualizar letra de Caminho das águas",
+    }),
+  );
+  expect(screen.getByText(/Água clara corre leve/)).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /Gerar PDF/ })).toBeDisabled();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Ocultar letra de Caminho das águas" }),
+  );
+  expect(screen.queryByText(/Água clara corre leve/)).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Cifras" }));
+  fireEvent.click(
+    await screen.findByRole("button", {
+      name: "Visualizar cifra de Caminho das águas",
+    }),
+  );
+  expect(screen.getByText(/Água clara corre leve/)).toHaveClass("mono");
+  expect(screen.getByRole("button", { name: /Gerar PDF/ })).toBeDisabled();
+});
 it("searches title and artist without accents and exposes four selections", async () => {
   const repo = createDemoRepository();
   const songs = await repo.listPublished({ kind: "lyrics", search: "cancao" });

@@ -55,10 +55,15 @@ function rebuild(parts: Part[]): { text: string; complex: boolean } {
 }
 export async function extractPdf(
   data: ArrayBuffer,
-): Promise<{ text: string; warnings: string[] }> {
+): Promise<{
+  text: string;
+  warnings: string[];
+  pages: { number: number; text: string; warnings: string[] }[];
+}> {
   const { getDocument } = await import("../pdf/pdfjs");
   const task = getDocument({ data: new Uint8Array(data.slice(0)) });
   const texts: string[] = [];
+  const pages: { number: number; text: string; warnings: string[] }[] = [];
   let complex = false;
   try {
     const doc = await task.promise;
@@ -83,9 +88,20 @@ export async function extractPdf(
         });
       const rebuilt = rebuild(parts);
       texts.push(rebuilt.text);
+      pages.push({
+        number: n,
+        text: rebuilt.text,
+        warnings:
+          rebuilt.complex || viewport.rotation !== 0
+            ? [
+                "Confira a ordem dos versos e o alinhamento dos acordes desta página.",
+              ]
+            : [],
+      });
       complex = complex || rebuilt.complex || viewport.rotation !== 0;
     }
     return {
+      pages,
       text: texts.join("\n\n").replace(/^(?:[ \t]*\n)+|(?:\n[ \t]*)+$/g, ""),
       warnings: complex
         ? [

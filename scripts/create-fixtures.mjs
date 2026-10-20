@@ -45,4 +45,33 @@ empty.setCreationDate(date);
 empty.setModificationDate(date);
 empty.addPage();
 await writeFile(new URL("vazio.pdf", dir), await empty.save());
+const collection = await PDFDocument.create();
+collection.registerFontkit(fontkit);
+collection.setCreationDate(date);
+collection.setModificationDate(date);
+const collectionFont = await collection.embedFont(
+  await readFile(
+    new URL("../public/fonts/NotoSansMono-Regular.ttf", import.meta.url),
+  ),
+  { subset: true },
+);
+for (const [title, content] of [
+  [
+    "Canção do encontro",
+    "C   G\nVamos cantar juntos\n\nAm  F\nCada voz se encontra aqui",
+  ],
+  ["Canção do encontro (continuação)", "Dm  G\nMais um verso para cantar"],
+  ["Outra manhã", "D   A\nUm novo dia vai chegar"],
+]) {
+  const page = collection.addPage([595.276, 841.89]);
+  page.drawText(title, { font: collectionFont, size: 16, x: 40, y: 780 });
+  page.drawText(content, {
+    font: collectionFont,
+    size: 11,
+    x: 40,
+    y: 740,
+    lineHeight: 14,
+  });
+}
+await writeFile(new URL("cifras multiplas.pdf", dir), await collection.save());
 console.log("Fixtures autorais DOCX/PDF geradas.");

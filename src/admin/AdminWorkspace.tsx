@@ -22,7 +22,14 @@ import {
 } from "./batch";
 import { saveImport } from "./saveImport";
 import { validateFiles } from "../import/validate";
-import { importFile } from "../import/importFile";
+import { prepareImport } from "./prepareImport";
+import {
+  canJoinNext,
+  suggestsContinuation,
+  joinPdfItems,
+  splitPdfItem,
+  splitNeedsConfirmation,
+} from "./pdfBatch";
 import { ImportReview } from "./ImportReview";
 import { SongEditor } from "./SongEditor";
 export function AdminWorkspace({
@@ -96,28 +103,67 @@ export function AdminWorkspace({
     setBusy(true);
     try {
       for (const item of next) {
-        const result = await importFile(item.file, kind);
+        const prepared = await prepareImport(item.file, kind);
         if (!mounted.current) return;
-        if (result.ok)
-          patch(item.id, {
-            draft: result.draft,
-            warnings: result.warnings,
-            status: "review",
-          });
-        else
-          patch(item.id, {
-            status: "error",
-            error: result.message,
-            attachOriginal: false,
-          });
+        setItems((current) =>
+          current.flatMap((entry) =>
+            entry.id === item.id ? prepared : [entry],
+          ),
+        );
       }
     } finally {
       if (mounted.current) setBusy(false);
     }
   }
+  async function join(item: ImportItem, next: ImportItem) {
+    if (locked || !canJoinNext(item, next)) return;
+    setBusy(true);
+    setError("");
+    try {
+      const combined = await joinPdfItems(item, next);
+      if (mounted.current)
+        setItems((current) =>
+          current.flatMap((entry) =>
+            entry.id === item.id
+              ? [combined]
+              : entry.id === next.id
+                ? []
+                : [entry],
+          ),
+        );
+    } catch {
+      if (mounted.current)
+        setError(
+          "Não foi possível juntar as páginas. O texto continua aqui para tentar novamente.",
+        );
+    } finally {
+      if (mounted.current) setBusy(false);
+    }
+  }
+  function split(item: ImportItem) {
+    if (locked) return;
+    const edited = splitNeedsConfirmation(item);
+    if (
+      edited &&
+      !window.confirm(
+        "Separar páginas restaura o texto extraído do PDF e descarta os ajustes deste item. Continuar?",
+      )
+    )
+      return;
+    try {
+      const separated = splitPdfItem(item, edited);
+      setItems((current) =>
+        current.flatMap((entry) =>
+          entry.id === item.id ? separated : [entry],
+        ),
+      );
+    } catch {
+      setError("Não foi possível separar as páginas. O texto continua aqui.");
+    }
+  }
   async function saveOne(item: ImportItem, status: SongStatus) {
     setNotice("");
-    patch(item.id, { status: "saving", error: null });
+    patch(item.id, { status: "saving", error: null, saveAttempted: true });
     try {
       await saveImport(item, status, repo);
       if (status === "published") {
@@ -252,7 +298,11 @@ export function AdminWorkspace({
             <Upload size={29} strokeWidth={1.3} />
             <strong>{busy ? "Lendo arquivos…" : "Enviar arquivos"}</strong>
             <span>DOCX ou PDF · Até 20 arquivos de 10 MiB cada</span>
-            <small>Um arquivo por música.</small>
+            <small>
+              {kind === "chords"
+                ? "PDF: uma cifra por página. Junte continuações na revisão."
+                : "Um arquivo por música."}
+            </small>
             <input
               type="file"
               multiple
@@ -300,12 +350,23 @@ export function AdminWorkspace({
                   Limpar revisão
                 </button>
               </div>
-              {items.map((item) => (
+              {items.map((item, index) => (
                 <ImportReview
                   key={item.id}
                   item={item}
                   duplicate={duplicates.has(item.id)}
-                  busy={busy}
+                  busy={locked}
+                  continuation={suggestsContinuation(item, items[index + 1])}
+                  onJoin={
+                    canJoinNext(item, items[index + 1])
+                      ? () => void join(item, items[index + 1])
+                      : undefined
+                  }
+                  onSplit={
+                    item.pdf && item.pdf.pages.length > 1 && !item.saveAttempted
+                      ? () => split(item)
+                      : undefined
+                  }
                   onChange={(update) => patch(item.id, update)}
                   onSave={(status) => void saveOne(item, status)}
                 />

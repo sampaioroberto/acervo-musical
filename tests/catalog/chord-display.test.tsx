@@ -15,7 +15,9 @@ it("preserves chord lines with horizontal scrolling while lyrics can wrap", asyn
     await screen.findAllByRole("button", { name: /Selecionar / });
     fireEvent.click(screen.getByRole("button", { name: "Cifras" }));
     fireEvent.click(
-      await screen.findByRole("button", { name: /^Canção do amanhecer/ }),
+      await screen.findByRole("button", {
+        name: "Visualizar cifra de Canção do amanhecer",
+      }),
     );
     const chord = document.querySelector(".song-content.mono")!;
     expect(getComputedStyle(chord).whiteSpace).toBe("pre");
