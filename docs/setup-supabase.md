@@ -6,6 +6,8 @@ Abra https://supabase.com/dashboard/sign-up e conclua o cadastro pessoalmente. V
 
 Se o painel pedir uma organização, crie uma organização pessoal no plano Free. Em seguida crie um projeto chamado Acervo Musical nessa organização, também no plano Free. Prefira a região South America (São Paulo), se estiver disponível. Defina e guarde a senha do banco privadamente; ela não é a senha de entrada do seu site. Aguarde o projeto ficar pronto.
 
+Nas opções de criação, mantenha Enable Data API ativado, Automatically expose new tables desativado e Enable automatic RLS ativado. A migração concede explicitamente as permissões necessárias e aplica as políticas de acesso.
+
 O plano Free atende à primeira configuração. Ele tem limites de uso e pode pausar projetos após uma semana de inatividade. Referências oficiais: https://supabase.com/pricing e https://supabase.com/docs/guides/platform/regions.
 
 ## Banco e conta de administração

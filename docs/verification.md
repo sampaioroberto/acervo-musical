@@ -1,6 +1,14 @@
 # Verificação da implementação
 
-Data: 20/10/2026. Projeto implementado e verificado localmente; publicação em serviços externos ainda não realizada.
+Data: 20/10/2026. Projeto implementado e verificado localmente e no GitHub Actions. Demonstração publicada no GitHub Pages; conexão ao acervo real do Supabase ainda pendente.
+
+## Publicação da demonstração
+
+Código enviado diretamente ao branch main em https://github.com/sampaioroberto/acervo-musical, sem Pull Request, conforme solicitado. Demonstração disponível em https://sampaioroberto.github.io/acervo-musical/ com VITE_DEMO=true.
+
+O workflow https://github.com/sampaioroberto/acervo-musical/actions/runs/39488487101 concluiu verificação, build e deploy com sucesso sobre 83d88fc. No GitHub passaram 49 testes unitários/componentes, 2 de integração real, 4 verificações SQL e os 6 cenários Playwright. A primeira execução identificou um pixel de rolagem horizontal em telas pequenas: a margem negativa da ilustração foi removida; a regressão passou sem relaxar o limite de largura.
+
+O endereço público foi aberto por CUA e a geração das quatro letras em uma página foi conferida, com fontes e worker carregados sob /acervo-musical/. A demonstração continua claramente identificada e não recebe uploads compartilhados.
 
 ## Verificações executadas
 
@@ -21,15 +29,15 @@ Na administração local, uma conta fictícia importou DOCX e PDF no mesmo lote,
 
 ## Limites da validação
 
-- A suíte automatizada Playwright contém 6 cenários e sua descoberta/configuração foram verificadas. A execução automatizada completa está preparada no CI; localmente, os fluxos foram exercitados por CUA, sem iniciar outro controlador de navegador. Não confundir isso com um resultado de Playwright executado.
+- Os 6 cenários Playwright foram executados e aprovados no GitHub Actions. Localmente, os fluxos foram exercitados por CUA, sem iniciar outro controlador de navegador.
 - Os exemplos são autorais. Os arquivos reais do usuário ainda não foram fornecidos; a fidelidade de extração deles precisa ser conferida durante a revisão de importação.
-- A integração contínua foi configurada, mas seus workflows ainda não foram executados em um repositório remoto.
+- O primeiro CI remoto exigiu a correção de largura descrita acima; a execução posterior aprovou as verificações e publicou a demonstração.
 - O build informa um chunk grande relacionado às bibliotecas de PDF/fontes, carregado somente quando se abre a geração ou a administração. Não é uma falha de compilação.
 - A revisão independente examinou o código em 9df6ad9 e encontrou quatro problemas importantes. Foram reproduzidos por testes que falharam antes das correções e passaram depois; a suíte completa passou novamente. Nenhum achado crítico ou menor foi registrado. O revisor não refez a conferência visual nem recertificou as suítes; esses testes foram executados pelo implementador. Veja review.md.
 
 ## Publicação
 
-Não foi criado ou conectado um projeto Supabase na nuvem. É necessário provisionar a conta administrativa e configurar os parâmetros públicos conforme setup-supabase.md. O repositório local contém os workflows para GitHub Pages; a URL pública depende da configuração descrita em publication.md.
+O usuário criou seu projeto Supabase na nuvem. Ainda é necessário aplicar a migração, provisionar a conta administrativa e conectar os parâmetros públicos conforme setup-supabase.md. O painel requer autenticação; o acesso ao Chrome não foi autorizado nesta sessão, então a configuração do painel segue com orientação ao usuário. A demonstração pública permanece ativa até concluir essa conexão.
 
 ## Decisões de execução
 
