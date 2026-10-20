@@ -1,6 +1,14 @@
 # Verificação da implementação
 
-Data: 20/10/2026. Projeto implementado e verificado localmente e no GitHub Actions. Demonstração publicada no GitHub Pages; conexão ao acervo real do Supabase ainda pendente.
+Data: 20/10/2026. Projeto implementado e verificado localmente e no GitHub Actions. Site publicado e conectado ao Supabase real; conta única de administração provisionada.
+
+## Conexão do acervo real
+
+A migração foi aplicada ao projeto Supabase do usuário pelo SQL Editor, após sua autorização. A consulta de metadados confirmou songs e song_originals com RLS ativo; a tabela privada de configuração administrativa permanece sem privilégios para os clientes, conforme a migração testada. Foi registrada uma única conta administrativa, criada pelo próprio usuário sem compartilhar a senha.
+
+Cadastro público e login anônimo desativados; provedor Email mantido habilitado. Site URL e Redirect URL configurados para https://sampaioroberto.github.io/acervo-musical/. A URL e a chave Publishable foram configuradas nas variáveis do GitHub; VITE_DEMO foi desativado. Nenhuma chave secret/service_role ou senha foi usada no frontend.
+
+O cliente público real consultou songs com sucesso (0 músicas), recebeu false de is_admin e teve acesso a song_originals recusado com código 42501. O workflow https://github.com/sampaioroberto/acervo-musical/actions/runs/39490509317 aprovou novamente todas as verificações e publicou o pacote conectado ao projeto real. A página pública carregou o acervo vazio sem o aviso de demonstração. O teste de login administrativo está sendo concluído pelo usuário, privadamente.
 
 ## Publicação da demonstração
 
@@ -37,7 +45,7 @@ Na administração local, uma conta fictícia importou DOCX e PDF no mesmo lote,
 
 ## Publicação
 
-O usuário criou seu projeto Supabase na nuvem. Ainda é necessário aplicar a migração, provisionar a conta administrativa e conectar os parâmetros públicos conforme setup-supabase.md. O painel requer autenticação; o acesso ao Chrome não foi autorizado nesta sessão, então a configuração do painel segue com orientação ao usuário. A demonstração pública permanece ativa até concluir essa conexão.
+O usuário criou seu projeto Supabase na nuvem e entrou no painel pelo navegador do aplicativo. Foram aplicadas a migração e a configuração descritas acima. A demonstração inicial foi substituída pelo acervo real. A senha da conta administrativa foi definida pelo usuário; o painel do serviço e a administração do site usam logins distintos.
 
 ## Decisões de execução
 
