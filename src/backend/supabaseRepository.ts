@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Json } from "./database.types";
 import type { AdminRepository } from "../catalog/repository";
+import { ConfirmedWriteRejection } from "../catalog/repository";
 import type { Song, AdminSong, OriginalRef } from "../catalog/types";
 import { filterSongs } from "../catalog/search";
 type SongRow = {
@@ -80,12 +81,20 @@ export function createSupabaseRepository(
       return row ? adminSong(row) : null;
     },
     save: async (value, original) => {
-      const row = checked(
-        await client.rpc("save_song", {
-          p_song: value as unknown as Json,
-          p_original: original as unknown as Json,
-        }),
-      );
+      const response = await client.rpc("save_song", {
+        p_song: value as unknown as Json,
+        p_original: original as unknown as Json,
+      });
+      // Transport failures and server/gateway errors may hide a late commit.
+      // Only a structured client-error response establishes a rejected write.
+      if (
+        response.error &&
+        response.status >= 400 &&
+        response.status < 500 &&
+        /^(?:[0-9A-Z]{5}|PGRST\d{3})$/.test(response.error.code)
+      )
+        throw new ConfirmedWriteRejection(response.error.message);
+      const row = checked(response);
       return adminSong(row as unknown as SongRow);
     },
     deleteSong: async (id) =>

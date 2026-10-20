@@ -1,11 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./database.types";
 export type Access = "anonymous" | "admin" | "denied";
+export type AuthChange = { identityChanged: boolean };
 export interface AuthPort {
   current(): Promise<Access>;
   signIn(email: string, password: string): Promise<void>;
   signOut(): Promise<void>;
-  subscribe(listener: () => void): () => void;
+  subscribe(listener: (change?: AuthChange) => void): () => void;
 }
 export function createAuth(client: SupabaseClient<Database>): AuthPort {
   return {
@@ -35,9 +36,16 @@ export function createAuth(client: SupabaseClient<Database>): AuthPort {
         throw new Error("Não foi possível encerrar a sessão.");
     },
     subscribe: (listener) => {
-      const { data } = client.auth.onAuthStateChange(() =>
-        queueMicrotask(listener),
-      );
+      let previousId: string | null | undefined;
+      const { data } = client.auth.onAuthStateChange((event, session) => {
+        const id = session?.user.id ?? null;
+        const identityChanged =
+          previousId === undefined ||
+          previousId !== id ||
+          event === "SIGNED_OUT";
+        previousId = id;
+        queueMicrotask(() => listener({ identityChanged }));
+      });
       return () => data.subscription.unsubscribe();
     },
   };

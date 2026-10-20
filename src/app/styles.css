@@ -392,6 +392,11 @@ h1 em {
 .mono {
   font-family: monospace !important;
 }
+.song-content.mono {
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+}
 .selection-panel {
   border: 1px solid var(--line);
   background: var(--paper);

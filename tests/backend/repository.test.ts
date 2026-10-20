@@ -2,6 +2,46 @@
 import { it, expect } from "vitest";
 import { createClient } from "@supabase/supabase-js";
 import { createSupabaseRepository } from "../../src/backend/supabaseRepository";
+import type { Song } from "../../src/catalog/types";
+it("marks a server rejection as definitive while keeping transport failures ambiguous", async () => {
+  const song: Song = {
+    id: "test",
+    title: "Teste",
+    artist: "",
+    kind: "lyrics",
+    content: "Voz",
+    status: "draft",
+    createdAt: "",
+    updatedAt: "",
+  };
+  const client = (fetch: typeof globalThis.fetch) =>
+    createClient("https://example.supabase.co", "public-test", {
+      auth: { persistSession: false },
+      global: { fetch },
+    });
+  const rejected = createSupabaseRepository(
+    client(
+      async () =>
+        new Response(
+          JSON.stringify({ code: "23514", message: "constraint failed" }),
+          { status: 400, headers: { "Content-Type": "application/json" } },
+        ),
+    ),
+  );
+  await expect(rejected.save(song, null)).rejects.toHaveProperty(
+    "name",
+    "ConfirmedWriteRejection",
+  );
+  const offline = createSupabaseRepository(
+    client(async () => {
+      throw new TypeError("Failed to fetch");
+    }),
+  );
+  await expect(offline.save(song, null)).rejects.not.toHaveProperty(
+    "name",
+    "ConfirmedWriteRejection",
+  );
+});
 it("searches subsequent API pages and exposes no original references publicly", async () => {
   const rows = Array.from({ length: 500 }, (_, i) => ({
     id: String(i),

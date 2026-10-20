@@ -57,3 +57,24 @@ it("allows manual recovery without attaching a document that failed import", asy
   expect(records.get(i.id)?.original).toBeNull();
   expect(files.size).toBe(0);
 });
+it("keeps the original when the transaction commits after negative reconciliation", async () => {
+  const { repo, records, files } = memoryRepo();
+  const i = { ...item(), reviewed: true };
+  let commit = () => {};
+  repo.save = async (song, original) => {
+    commit = () => {
+      records.set(song.id, { ...song, original });
+    };
+    throw new TypeError("Failed to fetch");
+  };
+  await expect(saveImport(i, "published", repo)).rejects.toThrow(
+    "Não foi possível confirmar o resultado",
+  );
+  expect(records.size).toBe(0);
+  commit();
+  expect(records.get(i.id)?.original?.path).toBe(i.original.path);
+  expect(files.has(i.original.path)).toBe(true);
+  expect((await saveImport(i, "published", repo)).id).toBe(i.id);
+  expect(records.size).toBe(1);
+  expect(files.size).toBe(1);
+});

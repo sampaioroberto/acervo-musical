@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { AdminRepository } from "../catalog/repository";
-import type { AuthPort, Access } from "../backend/auth";
+import type { AuthPort, Access, AuthChange } from "../backend/auth";
 import { LoginForm } from "./LoginForm";
 import { AdminWorkspace } from "./AdminWorkspace";
 import "./admin.css";
@@ -19,8 +19,9 @@ export function AdminPage({
   useEffect(() => {
     let active = true,
       version = 0;
-    const verify = () => {
+    const verify = (change?: AuthChange) => {
       const current = ++version;
+      if (change?.identityChanged !== false) setAccess("checking");
       auth
         .current()
         .then((role) => {

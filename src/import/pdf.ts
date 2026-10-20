@@ -86,7 +86,7 @@ export async function extractPdf(
       complex = complex || rebuilt.complex || viewport.rotation !== 0;
     }
     return {
-      text: texts.join("\n\n").trim(),
+      text: texts.join("\n\n").replace(/^(?:[ \t]*\n)+|(?:\n[ \t]*)+$/g, ""),
       warnings: complex
         ? [
             "Este PDF tem um layout que precisa de revisão. Confira a ordem dos versos e o alinhamento dos acordes.",

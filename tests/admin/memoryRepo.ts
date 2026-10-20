@@ -1,4 +1,5 @@
 import type { AdminRepository } from "../../src/catalog/repository";
+import { ConfirmedWriteRejection } from "../../src/catalog/repository";
 import type { AdminSong } from "../../src/catalog/types";
 import { filterSongs } from "../../src/catalog/search";
 export function memoryRepo() {
@@ -16,7 +17,8 @@ export function memoryRepo() {
       return records.get(id) ?? null;
     },
     save: async (song, original) => {
-      if (state.saveFailure === "before") throw Error("rejected");
+      if (state.saveFailure === "before")
+        throw new ConfirmedWriteRejection("rejected");
       const saved = { ...song, original };
       records.set(song.id, saved);
       if (state.saveFailure === "unknown") state.unreachable = true;

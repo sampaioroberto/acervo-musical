@@ -4,7 +4,7 @@ Data: 20/10/2026. Projeto implementado e verificado localmente; publicação em 
 
 ## Verificações executadas
 
-- 41 testes unitários e de componentes aprovados, cobrindo seleção, busca, paginação de consultas, fontes, ajuste ao A4, limites, importação, revisão, idempotência e expiração de sessão.
+- 49 testes unitários e de componentes aprovados, cobrindo seleção, busca, paginação de consultas, fontes, ajuste ao A4, limites, importação, revisão, idempotência e expiração/troca de sessão.
 - 2 testes de integração aprovados contra Supabase real em containers locais: autenticação, CRUD, Storage, RPCs, rascunhos privados, cadastro bloqueado e outra conta sem permissão de administração.
 - 4 verificações SQL/pgTAP aprovadas para RLS e privilégios.
 - TypeScript aprovado e pacote de produção compilado com o caminho /acervo-musical/, usando somente os parâmetros públicos do serviço local.
@@ -25,7 +25,7 @@ Na administração local, uma conta fictícia importou DOCX e PDF no mesmo lote,
 - Os exemplos são autorais. Os arquivos reais do usuário ainda não foram fornecidos; a fidelidade de extração deles precisa ser conferida durante a revisão de importação.
 - A integração contínua foi configurada, mas seus workflows ainda não foram executados em um repositório remoto.
 - O build informa um chunk grande relacionado às bibliotecas de PDF/fontes, carregado somente quando se abre a geração ou a administração. Não é uma falha de compilação.
-- A revisão independente do código é a etapa final antes da entrega; seu resultado será acrescentado a este registro.
+- A revisão independente examinou o código em 9df6ad9 e encontrou quatro problemas importantes. Foram reproduzidos por testes que falharam antes das correções e passaram depois; a suíte completa passou novamente. Nenhum achado crítico ou menor foi registrado. O revisor não refez a conferência visual nem recertificou as suítes; esses testes foram executados pelo implementador. Veja review.md.
 
 ## Publicação
 
@@ -38,3 +38,4 @@ Não foi criado ou conectado um projeto Supabase na nuvem. É necessário provis
 - Mammoth foi substituído por fflate e leitura inerte de WordprocessingML após a auditoria identificar uma dependência transitiva sem correção adequada. A extração de parágrafos, quebras e tabulações foi coberta por DOCX real de teste; layouts complexos continuam fora do escopo aprovado.
 - A conferência de importação no navegador foi feita na etapa 7, quando a interface de upload ficou disponível, após os testes dos importadores na etapa 6.
 - A validação local de interface usou CUA; Playwright permanece preparado para execução automatizada no CI. O custo dessa escolha é a ausência de uma rodada automatizada local de Playwright.
+- Uma falha de transporte ao gravar pode esconder uma transação ainda pendente. O original é preservado e o mesmo identificador é reutilizado na retentativa; somente uma rejeição comprovada permite limpar o upload. Se a revisão for abandonada sem resolver a retentativa, pode restar um objeto privado sem associação, que exige conferência manual antes de remover.

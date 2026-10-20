@@ -1,4 +1,10 @@
 import type { Song, CatalogQuery, AdminSong, OriginalRef } from "./types";
+export class ConfirmedWriteRejection extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ConfirmedWriteRejection";
+  }
+}
 export interface CatalogRepository {
   listPublished(query: CatalogQuery): Promise<Song[]>;
 }

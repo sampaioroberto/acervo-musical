@@ -1,6 +1,7 @@
 import type { ImportItem } from "./batch";
 import type { SongStatus, AdminSong, Song } from "../catalog/types";
 import type { AdminRepository } from "../catalog/repository";
+import { ConfirmedWriteRejection } from "../catalog/repository";
 import { normalizeText } from "../import/normalize";
 export async function saveImport(
   item: ImportItem,
@@ -26,7 +27,8 @@ export async function saveImport(
       updatedAt: now,
     };
   const original = item.attachOriginal === false ? null : item.original;
-  let uploadAttempted = false;
+  let uploadAttempted = false,
+    saveAttempted = false;
   const matches = (saved: AdminSong) =>
     saved.title === song.title &&
     saved.artist === song.artist &&
@@ -39,8 +41,9 @@ export async function saveImport(
       uploadAttempted = true;
       await repo.uploadOriginal(original, item.file);
     }
+    saveAttempted = true;
     return await repo.save(song, original);
-  } catch {
+  } catch (error) {
     let known: AdminSong | null;
     try {
       known = await repo.getAdmin(item.id);
@@ -50,7 +53,14 @@ export async function saveImport(
       );
     }
     if (known && matches(known)) return known;
-    if (!known && uploadAttempted && original) {
+    // Only a server rejection proves the RPC cannot commit later. A missing
+    // row immediately after a transport failure does not establish an orphan.
+    const rejected = error instanceof ConfirmedWriteRejection;
+    if (saveAttempted && !rejected)
+      throw new Error(
+        "Não foi possível confirmar o resultado. Seus dados continuam aqui. Tente salvar novamente sem reimportar o arquivo.",
+      );
+    if (!known && uploadAttempted && original && (!saveAttempted || rejected)) {
       try {
         await repo.removeOriginal(original);
       } catch {
