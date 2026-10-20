@@ -739,7 +739,7 @@ h1 em {
   .hero-illustration {
     width: 120px;
     height: 150px;
-    margin-right: -8px;
+    margin-right: 0;
   }
   .paper {
     inset: 6px 12px;
