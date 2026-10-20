@@ -1,0 +1,4 @@
+import {it,expect} from 'vitest';import {readFile} from 'node:fs/promises';import {extractDocx} from '../../src/import/docx';import {importFile} from '../../src/import/importFile';
+it('preserves Word paragraphs, explicit breaks, tabs and literal markup',async()=>{const bytes=await readFile(process.cwd()+'/tests/fixtures/letra com espaços.docx');const result=await extractDocx(new Uint8Array(bytes).buffer);expect(result.text).toBe('Canção de teste\nC   G\nVoz e coração\n\nNovo verso <script>');const file=new File([new Uint8Array(bytes)],'Minha música.DOCX');Object.defineProperty(file,'arrayBuffer',{value:async()=>new Uint8Array(bytes).buffer});const imported=await importFile(file,'lyrics');expect(imported).toMatchObject({ok:true,draft:{title:'Minha música',artist:'',kind:'lyrics',content:result.text}})});
+it('rejects a ZIP that is not a Word document',async()=>{await expect(extractDocx(new Uint8Array([80,75,3,4,0]).buffer)).rejects.toMatchObject({code:'invalid'})});
+
