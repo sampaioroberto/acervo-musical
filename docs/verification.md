@@ -8,7 +8,7 @@ A migração foi aplicada ao projeto Supabase do usuário pelo SQL Editor, após
 
 Cadastro público e login anônimo desativados; provedor Email mantido habilitado. Site URL e Redirect URL configurados para https://sampaioroberto.github.io/acervo-musical/. A URL e a chave Publishable foram configuradas nas variáveis do GitHub; VITE_DEMO foi desativado. Nenhuma chave secret/service_role ou senha foi usada no frontend.
 
-O cliente público real consultou songs com sucesso (0 músicas), recebeu false de is_admin e teve acesso a song_originals recusado com código 42501. O workflow https://github.com/sampaioroberto/acervo-musical/actions/runs/39490509317 aprovou novamente todas as verificações e publicou o pacote conectado ao projeto real. A página pública carregou o acervo vazio sem o aviso de demonstração. O teste de login administrativo está sendo concluído pelo usuário, privadamente.
+O cliente público real consultou songs com sucesso (0 músicas), recebeu false de is_admin e teve acesso a song_originals recusado com código 42501. O workflow https://github.com/sampaioroberto/acervo-musical/actions/runs/39490509317 aprovou novamente todas as verificações e publicou o pacote conectado ao projeto real. A página pública carregou o acervo vazio sem o aviso de demonstração. O usuário concluiu o login administrativo privadamente e confirmou o sucesso. A conferência por CUA no endereço publicado mostrou a tela Administrar acervo, o seletor Letras/Cifras e o upload de arquivos disponíveis, com o acervo inicialmente vazio.
 
 ## Publicação da demonstração
 
