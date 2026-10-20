@@ -80,7 +80,7 @@ interface AdminRepository extends CatalogRepository {
 
 Exportar esses tipos explicitamente. As consultas públicas nunca retornam referência a original. `save` grava registro e associação em uma transação; `deleteSong` exclui o registro e mantém eventual original marcado para limpeza até a remoção confirmada. `removeOriginal` é idempotente e remove também a referência pendente. Busca sem distinção de caixa/acentos, com normalização Unicode e ordenação `pt-BR`, tem a mesma semântica nos adaptadores público e de demonstração.
 
-## Tarefa 1: Acervo público e seleção de quatro músicas
+## Task 1: Acervo público e seleção de quatro músicas
 
 **Files:** criar os módulos `src/app/*`, `src/main.tsx` e `src/catalog/*` do mapa; `index.html`, `package.json`, `package-lock.json`, `.gitignore`, `tsconfig.json`, `vite.config.ts`, `vitest.config.ts`, `tests/setup.ts`, `tests/catalog/selection.test.ts` e `tests/catalog/catalog.test.tsx`.
 
@@ -104,7 +104,7 @@ it('recusa uma quinta música sem perder a seleção', () => {
 - [ ] **5. Executar `rtk npm test -- --run tests/catalog` e `rtk npm run typecheck`:** esperar aprovação; revisar no navegador o fluxo público responsivo antes do commit, usando o procedimento local de prévia aplicável.
 - [ ] **6. Commit:** adicionar apenas arquivos desta tarefa com `rtk git add` e executar `rtk git commit -m 'feat: add public catalog and song selection'`.
 
-## Tarefa 2: PDF de letras, fontes e ajuste ao A4
+## Task 2: PDF de letras, fontes e ajuste ao A4
 
 **Files:** criar `src/pdf/{types.ts,fonts.ts,text.ts,lyrics.ts}`, `public/fonts/{NotoSans-Regular.ttf,NotoSerif-Regular.ttf,NotoSansMono-Regular.ttf}`, respectivas licenças, `tests/pdf/{lyrics.test.ts,text.test.ts,fontFixtures.ts,fixtures.ts}`.
 
@@ -128,7 +128,7 @@ it('preserva o tamanho manual quando as quatro letras cabem', async () => {
 - [ ] **5. Executar os testes da tarefa e `rtk npm run typecheck`:** esperar aprovação. Renderizar PDFs de cada família e um caso limite em imagens e inspecionar margens, acentos, ordem e ausência de corte; seguir a habilidade PDF ao executar essa verificação.
 - [ ] **6. Commit:** `rtk git commit -m 'feat: generate configurable A4 lyric sheets'`, após adicionar os arquivos desta tarefa.
 
-## Tarefa 3: PDF de cifras com alinhamento e paginação
+## Task 3: PDF de cifras com alinhamento e paginação
 
 **Files:** criar `src/pdf/chords.ts`, `src/import/normalize.ts` e `tests/pdf/chords.test.ts`.
 
@@ -149,7 +149,7 @@ it('inicia cada cifra em uma página própria', async () => {
 - [ ] **4. Executar os testes da tarefa e `rtk npm run typecheck`:** esperar aprovação; renderizar e inspecionar uma cifra curta e outra com continuação, conferindo alinhamento e início de cada música.
 - [ ] **5. Commit:** `rtk git commit -m 'feat: generate paginated chord PDFs'`, após adicionar os arquivos da tarefa.
 
-## Tarefa 4: Prévia, opções de fonte e download
+## Task 4: Prévia, opções de fonte e download
 
 **Files:** criar `src/pdf/{PdfComposer.tsx,PdfPreview.tsx,usePdfPreview.ts}`, `tests/pdf/composer.test.tsx`, `tests/pdf/preview.test.tsx` e `e2e/pdf.spec.ts`; conectar em `src/app/App.tsx` e configurar `playwright.config.ts`.
 
@@ -171,7 +171,7 @@ it('bloqueia download enquanto recalcula as opções', async () => {
 - [ ] **4. Executar os testes da tarefa, `rtk npm run typecheck` e `rtk npm run test:e2e -- e2e/pdf.spec.ts`:** esperar quatro letras em um PDF de uma página e quatro cifras em ao menos quatro páginas; validar o download com PDF.js, sem depender apenas do texto da interface.
 - [ ] **5. Commit:** `rtk git commit -m 'feat: add live PDF preview and typography controls'`, após adicionar os arquivos da tarefa.
 
-## Tarefa 5: Supabase, políticas de acesso e sessão
+## Task 5: Supabase, políticas de acesso e sessão
 
 **Files:** criar `src/backend/*`, `supabase/config.toml`, `supabase/migrations/202610200001_archive.sql`, `supabase/tests/archive.test.sql`, `scripts/test-backend.mjs`, `.env.example`, `docs/setup-supabase.md`, `tests/backend/{repository.test.ts,access.integration.test.ts}`; adaptar `src/app/{config.ts,App.tsx}`.
 
@@ -195,7 +195,7 @@ it('nega alteração direta por outra conta autenticada', async () => {
 - [ ] **5. Executar `rtk npm test -- --run tests/backend`, `rtk npm run test:integration` e `rtk npm run typecheck`:** esperar aprovação real das operações públicas, da outra conta e da conta administrativa, incluindo Storage e RPCs. Confirmar que rascunhos não vazam pela busca e que fontes/worker continuam acessíveis ao público.
 - [ ] **6. Commit:** `rtk git commit -m 'feat: secure archive persistence with Supabase'`, após adicionar os arquivos da tarefa.
 
-## Tarefa 6: Importação de DOCX e PDF
+## Task 6: Importação de DOCX e PDF
 
 **Files:** criar `src/import/{types.ts,validate.ts,docx.ts,pdf.ts,importFile.ts}`, `scripts/create-fixtures.mjs`, `tests/import/{validate.test.ts,docx.test.ts,pdf.test.ts}` e `tests/fixtures/*`; reutilizar `normalize.ts` da tarefa 3.
 
@@ -217,7 +217,7 @@ it('recusa lote acima de vinte arquivos antes da extração', () => {
 - [ ] **5. Executar os testes da tarefa, `rtk npm run typecheck` e o build:** esperar aprovação. No navegador, importar os dois arquivos autorais e conferir o texto reconstruído contra a origem; se o usuário disponibilizar arquivos reais, repetir com eles e registrar limitações observadas.
 - [ ] **6. Commit:** `rtk git commit -m 'feat: import editable lyrics and chords from documents'`, após adicionar os arquivos da tarefa.
 
-## Tarefa 7: Administração, revisão e publicação de lotes
+## Task 7: Administração, revisão e publicação de lotes
 
 **Files:** criar `src/admin/*`, `src/pdf/previewSong.ts`, `tests/admin/{batch.test.ts,saveImport.test.ts,admin.test.tsx}`, `e2e/admin.spec.ts`; conectar a rota administrativa em `src/app/App.tsx`.
 
@@ -240,7 +240,7 @@ it('não publica um item que ainda não foi revisado', async () => {
 - [ ] **5. Executar os testes da tarefa, `rtk npm run test:integration` e `rtk npm run test:e2e -- e2e/admin.spec.ts`:** esperar importação de DOCX/PDF, revisão e publicação visível em sessão pública separada; rascunho permanece invisível. Cobrir edição, exclusão e expiração de sessão. Sem backend de teste disponível, registrar esse limite, sem simular publicação bem-sucedida.
 - [ ] **6. Commit:** `rtk git commit -m 'feat: add administrator import review and publication'`, após adicionar os arquivos da tarefa.
 
-## Tarefa 8: Publicação e validação integrada
+## Task 8: Publicação e validação integrada
 
 **Files:** criar `.github/workflows/{ci.yml,pages.yml}`, `README.md`, `docs/{publication.md,verification.md}`, `e2e/{accessibility.spec.ts,base-path.spec.ts}`; finalizar `vite.config.ts`, `playwright.config.ts` e `.env.example`.
 
