@@ -1,5 +1,93 @@
 import { test, expect } from "@playwright/test";
 import path from "node:path";
+import { PDFDocument, StandardFonts } from "pdf-lib";
+
+test("removes one of four PDF songs and reviews the other three together on mobile", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("./#/admin");
+  await page
+    .getByRole("textbox", { name: "E-mail", exact: true })
+    .fill("admin@acervo.local.test");
+  await page
+    .getByLabel("Senha", { exact: true })
+    .fill("Local-Musical-Test-2026!");
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Administrar acervo" }),
+  ).toBeVisible();
+  await page.getByRole("combobox").selectOption("chords");
+  const prefix = "Escolha E2E " + Date.now();
+  const pdf = await PDFDocument.create();
+  const font = await pdf.embedFont(StandardFonts.Courier);
+  for (let n = 1; n <= 4; n++)
+    pdf.addPage().drawText(`${prefix} ${n}\nC   G\nVerso para cantar`, {
+      font,
+      x: 40,
+      y: 740,
+      size: 12,
+      lineHeight: 18,
+    });
+  await page.getByLabel("Enviar arquivos").setInputFiles({
+    name: "Escolha.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await pdf.save()),
+  });
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(4);
+  await expect(page.getByRole("textbox", { name: /Artista/ })).toHaveCount(0);
+  page.once("dialog", (dialog) => dialog.accept());
+  await page
+    .getByRole("button", {
+      name: `Remover ${prefix} 2 da revisão`,
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(3);
+  await page
+    .getByRole("button", { name: "Marcar todos como revisados", exact: true })
+    .click();
+  const checks = page.getByRole("checkbox", { name: /Conferi o texto/ });
+  for (let n = 0; n < 3; n++) await expect(checks.nth(n)).toBeChecked();
+  expect(
+    await page.evaluate(() => document.body.scrollWidth),
+  ).toBeLessThanOrEqual(390);
+  await page
+    .getByRole("button", { name: "Publicar revisados", exact: true })
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(0);
+  for (const n of [1, 3, 4])
+    await expect(
+      page.getByRole("heading", { name: `${prefix} ${n}`, exact: true }),
+    ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: `${prefix} 2`, exact: true }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Sair", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Entrar na administração" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Acervo", exact: true }).click();
+  await page.getByRole("button", { name: "Cifras", exact: true }).click();
+  await page
+    .getByRole("searchbox", { name: "Buscar título ou trecho", exact: true })
+    .fill("VERSO PARA CANTAR");
+  await expect(
+    page.getByRole("button", {
+      name: new RegExp(`^Visualizar cifra de ${prefix} `),
+    }),
+  ).toHaveCount(3);
+  await expect(
+    page.getByRole("heading", { name: `${prefix} 2`, exact: true }),
+  ).toHaveCount(0);
+});
+
 test("reviews a DOCX upload, publishes it and hides administrative forms after logout", async ({
   page,
 }) => {

@@ -100,6 +100,13 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.batch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .batch-heading h3 {
   font-family: Georgia, serif;
@@ -131,6 +138,18 @@
   font-size: 11px;
   color: #82956f;
   margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.remove-import {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #9a513c;
+  min-height: 36px;
 }
 .pdf-page-actions {
   margin: 0 0 20px;
@@ -185,15 +204,6 @@
   white-space: pre;
   overflow: auto;
   font-size: 13px;
-}
-.field-row {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 14px;
-}
-.optional {
-  color: #9da58e;
-  font-size: 10px;
 }
 .review-check {
   display: flex;
@@ -435,10 +445,6 @@
   }
   .login-card {
     padding: 25px;
-  }
-  .field-row {
-    grid-template-columns: 1fr;
-    gap: 0;
   }
   .import-review {
     padding: 15px 12px;

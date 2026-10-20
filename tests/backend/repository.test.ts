@@ -68,6 +68,7 @@ it("searches subsequent API pages and exposes no original references publicly", 
                   ...rows[0],
                   id: "501",
                   title: "Canção final",
+                  content: "Um trecho escondido\nentre versos",
                   original: { path: "private" },
                 },
               ]
@@ -80,7 +81,10 @@ it("searches subsequent API pages and exposes no original references publicly", 
     },
   });
   const repo = createSupabaseRepository(client);
-  const result = await repo.listPublished({ kind: "lyrics", search: "cancao" });
+  const result = await repo.listPublished({
+    kind: "lyrics",
+    search: "TRECHO ESCONDIDO ENTRE VERSOS",
+  });
   expect(result.map((s) => s.title)).toEqual(["Canção final"]);
   expect(result[0]).not.toHaveProperty("original");
   expect(paths).toHaveLength(2);

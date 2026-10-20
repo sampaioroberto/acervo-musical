@@ -27,14 +27,14 @@ it("lets visitors read lyrics and chords without selecting songs or generating a
   expect(screen.getByText(/Água clara corre leve/)).toHaveClass("mono");
   expect(screen.getByRole("button", { name: /Gerar PDF/ })).toBeDisabled();
 });
-it("searches title and artist without accents and exposes four selections", async () => {
+it("searches titles without accents, excludes artist metadata and exposes four selections", async () => {
   const repo = createDemoRepository();
   const songs = await repo.listPublished({ kind: "lyrics", search: "cancao" });
   expect(songs).toHaveLength(1);
   expect(songs[0].title).toBe("Canção do amanhecer");
   expect(
     await repo.listPublished({ kind: "lyrics", search: "cora" }),
-  ).toHaveLength(4);
+  ).toHaveLength(0);
   render(<CatalogPage repository={repo} onCompose={() => {}} />);
   const buttons = await screen.findAllByRole("button", { name: /Selecionar / });
   expect(buttons).toHaveLength(4);
@@ -47,6 +47,29 @@ it("searches title and artist without accents and exposes four selections", asyn
   expect(
     await screen.findByText("Nenhuma música encontrada."),
   ).toBeInTheDocument();
+});
+it("finds a song by a lyric excerpt without accents or case differences", async () => {
+  render(
+    <CatalogPage repository={createDemoRepository()} onCompose={() => {}} />,
+  );
+  fireEvent.change(
+    screen.getByRole("searchbox", { name: "Buscar título ou trecho" }),
+    { target: { value: "AGUA CLARA CORRE LEVE" } },
+  );
+  expect(
+    await screen.findByRole("heading", {
+      name: "Caminho das águas",
+    }),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByRole("heading", { name: "Canção do amanhecer" }),
+  ).not.toBeInTheDocument();
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: "Visualizar letra de Caminho das águas",
+    }),
+  );
+  expect(screen.getByText(/Água clara corre leve/)).toBeInTheDocument();
 });
 it("generates from one song and keeps all six selections in the chosen order", async () => {
   const [sample] = await createDemoRepository().listPublished({

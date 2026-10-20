@@ -11,6 +11,7 @@ Site para organizar letras e cifras e gerar PDFs para impressão. Os visitantes 
 - Upload múltiplo DOCX/PDF: até 20 arquivos de 10 MiB, com revisão editável e publicação explícita. PDFs de cifras são separados por página, com sugestão de continuação e opções para juntar ou separar antes de salvar; cada música guarda apenas as páginas de origem correspondentes.
 - Consulta pública por Visualizar letra ou Visualizar cifra, sem precisar selecionar músicas ou gerar PDF.
 - Cadastro manual de letras e cifras, com título em negrito na tela e no PDF. Após publicar, o formulário é limpo para a próxima música.
+- Na revisão, remova músicas individuais do lote ou marque todos os itens completos como revisados antes de publicar. Os formulários pedem apenas título, tipo e conteúdo; a busca pública encontra títulos e trechos, sem distinguir maiúsculas ou acentos.
 - Acervo público no Supabase com rascunhos e arquivos originais privados. As regras do banco autorizam apenas a conta administrativa.
 
 ## Executar localmente

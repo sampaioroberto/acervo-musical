@@ -161,6 +161,17 @@ export function AdminWorkspace({
       setError("Não foi possível separar as páginas. O texto continua aqui.");
     }
   }
+  function removeFromReview(item: ImportItem) {
+    if (locked || item.status === "saved") return;
+    if (
+      !window.confirm(
+        `Remover “${item.draft.title.trim() || "Nova música"}” desta revisão? Músicas já salvas no acervo não serão excluídas.`,
+      )
+    )
+      return;
+    setItems((current) => current.filter((entry) => entry.id !== item.id));
+    setNotice("");
+  }
   async function saveOne(item: ImportItem, status: SongStatus) {
     setNotice("");
     patch(item.id, { status: "saving", error: null, saveAttempted: true });
@@ -332,23 +343,45 @@ export function AdminWorkspace({
                 <h3>
                   Músicas para salvar <span>{items.length}</span>
                 </h3>
-                <button
-                  className="text-button"
-                  disabled={locked}
-                  onClick={() => {
-                    if (
-                      items.every((i) => i.status === "saved") ||
-                      window.confirm(
-                        "Descartar os itens ainda não salvos desta revisão?",
-                      )
-                    ) {
-                      setItems([]);
-                      setNotice("");
+                <div className="batch-actions">
+                  <button
+                    className="text-button"
+                    disabled={
+                      locked || !validItems.some((item) => !item.reviewed)
                     }
-                  }}
-                >
-                  Limpar revisão
-                </button>
+                    onClick={() => {
+                      if (locked) return;
+                      setItems((current) =>
+                        current.map((item) =>
+                          item.status !== "saved" &&
+                          item.draft.title.trim() &&
+                          item.draft.content.trim()
+                            ? { ...item, reviewed: true }
+                            : item,
+                        ),
+                      );
+                    }}
+                  >
+                    Marcar todos como revisados
+                  </button>
+                  <button
+                    className="text-button"
+                    disabled={locked}
+                    onClick={() => {
+                      if (
+                        items.every((i) => i.status === "saved") ||
+                        window.confirm(
+                          "Descartar os itens ainda não salvos desta revisão?",
+                        )
+                      ) {
+                        setItems([]);
+                        setNotice("");
+                      }
+                    }}
+                  >
+                    Limpar revisão
+                  </button>
+                </div>
               </div>
               {items.map((item, index) => (
                 <ImportReview
@@ -368,6 +401,11 @@ export function AdminWorkspace({
                       : undefined
                   }
                   onChange={(update) => patch(item.id, update)}
+                  onRemove={
+                    item.status !== "saved"
+                      ? () => removeFromReview(item)
+                      : undefined
+                  }
                   onSave={(status) => void saveOne(item, status)}
                 />
               ))}

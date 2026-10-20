@@ -7,13 +7,15 @@ export function searchable(text: string): string {
     .trim();
 }
 export function filterSongs(songs: Song[], query: CatalogQuery): Song[] {
-  const term = searchable(query.search);
+  const normalized = (text: string) => searchable(text).replace(/\s+/gu, " ");
+  const term = normalized(query.search);
   return songs
     .filter(
       (s) =>
         s.status === "published" &&
         s.kind === query.kind &&
-        searchable(s.title + " " + s.artist).includes(term),
+        (normalized(s.title).includes(term) ||
+          normalized(s.content).includes(term)),
     )
     .sort(
       (a, b) =>

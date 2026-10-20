@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, Eye } from "lucide-react";
+import { CheckCircle2, Eye, Trash2 } from "lucide-react";
 import type { ImportItem } from "./batch";
 import type { SongDraft, SongStatus } from "../catalog/types";
 import { SongFields } from "./SongFields";
@@ -12,6 +12,7 @@ export function ImportReview({
   onSave,
   onJoin,
   onSplit,
+  onRemove,
   continuation = false,
 }: {
   item: ImportItem;
@@ -21,6 +22,7 @@ export function ImportReview({
   onSave: (status: SongStatus) => void;
   onJoin?: () => void;
   onSplit?: () => void;
+  onRemove?: () => void;
   continuation?: boolean;
 }) {
   const [preview, setPreview] = useState<SongDraft | null>(null);
@@ -43,6 +45,17 @@ export function ImportReview({
           </span>
         ) : (
           "Confira o conteúdo antes de salvar."
+        )}
+        {onRemove && (
+          <button
+            className="text-button remove-import"
+            type="button"
+            disabled={locked}
+            aria-label={`Remover ${item.draft.title.trim() || "música"} da revisão`}
+            onClick={onRemove}
+          >
+            <Trash2 size={14} /> Remover da revisão
+          </button>
         )}
       </div>
       {item.pdf && (

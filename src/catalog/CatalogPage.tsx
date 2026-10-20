@@ -115,8 +115,8 @@ export function CatalogPage({
               <Search size={18} />
               <input
                 type="search"
-                placeholder="Buscar música ou artista"
-                aria-label="Buscar música ou artista"
+                placeholder="Buscar título ou trecho"
+                aria-label="Buscar título ou trecho"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -172,7 +172,6 @@ export function CatalogPage({
                         aria-expanded={expanded === song.id}
                       >
                         <h3>{song.title}</h3>
-                        {song.artist && <span>{song.artist}</span>}
                         <span className="read-song">
                           <Eye size={13} />
                           {expanded === song.id ? "Ocultar" : "Visualizar"}{" "}
