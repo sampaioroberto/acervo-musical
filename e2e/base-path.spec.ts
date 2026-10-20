@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 test("opens administration directly below the GitHub Pages base path", async ({
   page,
 }) => {
-  await page.goto("/acervo-musical/#/admin");
+  await page.goto("/louvores-cora/#/admin");
   await expect(
     page.getByRole("heading", { name: "Entrar na administração" }),
   ).toBeVisible();

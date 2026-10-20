@@ -4,12 +4,12 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   use: {
-    baseURL: "http://127.0.0.1:5174/acervo-musical/",
+    baseURL: "http://127.0.0.1:5174/louvores-cora/",
     trace: "retain-on-failure",
   },
   webServer: {
     command: "npm run dev -- --port 5174 --mode e2e",
-    url: "http://127.0.0.1:5174/acervo-musical/",
+    url: "http://127.0.0.1:5174/louvores-cora/",
     reuseExistingServer: !process.env.CI,
   },
   reporter: "list",

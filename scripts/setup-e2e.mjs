@@ -71,7 +71,7 @@ await writeFile(
     url +
     "\nVITE_SUPABASE_PUBLISHABLE_KEY=" +
     config.ANON_KEY +
-    "\nVITE_BASE_PATH=/acervo-musical/\n",
+    "\nVITE_BASE_PATH=/louvores-cora/\n",
 );
 console.log(
   "Ambiente E2E local preparado. Somente parâmetros públicos gravados.",

@@ -31,7 +31,7 @@ on conflict (singleton) do update set user_id = excluded.user_id;
 
 O UUID precisa ser da conta que você criou para entrar na administração do site. O login no painel Supabase e o login do site são contas distintas.
 
-Neste repositório, a URL do site é https://sampaioroberto.github.io/acervo-musical/. Use esse endereço em Site URL e Redirect URLs. A rota administrativa é https://sampaioroberto.github.io/acervo-musical/#/admin.
+Neste repositório, a URL do site é https://sampaioroberto.github.io/louvores-cora/. Use esse endereço em Site URL e Redirect URLs. A rota administrativa é https://sampaioroberto.github.io/louvores-cora/#/admin.
 
 ## Conectar ao GitHub Pages
 
@@ -39,7 +39,7 @@ Na página do projeto, abra Connect e copie Project URL e a chave Publishable. T
 
 - VITE_SUPABASE_URL: Project URL.
 - VITE_SUPABASE_PUBLISHABLE_KEY: chave Publishable.
-- VITE_BASE_PATH: /acervo-musical/.
+- VITE_BASE_PATH: /louvores-cora/.
 - VITE_DEMO: false, depois que os dois parâmetros anteriores estiverem configurados.
 
 Acione Publish GitHub Pages pela aba Actions após alterar as variáveis. Enquanto a demonstração estiver ativa, ela mostra exemplos autorais e não publica uploads no acervo compartilhado.

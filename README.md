@@ -2,6 +2,8 @@
 
 Site para organizar letras e cifras e gerar PDFs para impressão. Os visitantes não precisam de login. Uma única conta administrativa cuida das importações, revisões, rascunhos, publicações e exclusões.
 
+Endereço público: https://sampaioroberto.github.io/louvores-cora/.
+
 ## Funcionalidades
 
 - Busca por título e artista, com seleção e ordenação de uma ou mais músicas.
@@ -29,7 +31,7 @@ Para usar seu próprio acervo, copie .env.example para .env.local e siga [a conf
 - npm run backend:start: Supabase local para testes, exige Docker em execução.
 - npm run test:integration: operações reais de API, autenticação e Storage no Supabase local. Recusa endereços externos.
 - npm run test:e2e:setup: prepara dados fictícios e configuração isolada .env.e2e.local para os testes de navegador.
-- npm run test:e2e: testes de navegador em /acervo-musical/ na porta 5174. Instale antes o Chromium com npx playwright install chromium, se necessário. O servidor de teste é separado da prévia normal na porta 5173.
+- npm run test:e2e: testes de navegador em /louvores-cora/ na porta 5174. Instale antes o Chromium com npx playwright install chromium, se necessário. O servidor de teste é separado da prévia normal na porta 5173.
 - node_modules/.bin/supabase test db: testes SQL de privilégios e RLS.
 
 O ambiente E2E cria apenas uma conta local fictícia, sem valor em produção. Não reutilize as credenciais de teste. Os serviços locais ficam em portas 55321/55322; para encerrar, use node_modules/.bin/supabase stop na pasta deste projeto. Docker não é necessário para visitantes nem para o site publicado.
