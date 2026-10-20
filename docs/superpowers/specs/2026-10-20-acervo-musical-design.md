@@ -13,6 +13,7 @@ Criar um site público para consultar letras e cifras e gerar PDFs de quatro mú
 - Importação de um ou vários arquivos DOCX ou PDF pelo administrador.
 - Os PDFs de origem têm texto selecionável e foram exportados de documentos Word.
 - Seleção de quatro letras para um PDF de uma única folha A4, com duas letras em cada coluna.
+- Controle do tamanho e da família da fonte das letras antes de gerar o PDF, com prévia do resultado.
 - Seleção de quatro cifras para um PDF com uma quebra de página entre as músicas.
 - Somente o administrador pode adicionar, editar e excluir conteúdo.
 
@@ -33,7 +34,7 @@ Estas são escolhas de implementação do desenho, além dos requisitos expresso
 1. Abrir o acervo e filtrar letras ou cifras, com busca por título e artista.
 2. Abrir a prévia de uma música ou adicioná-la à seleção.
 3. Selecionar exatamente quatro registros do mesmo tipo, sem repetição, e alterar sua ordem por controles acessíveis no computador e no celular.
-4. Abrir a prévia do PDF e baixar o resultado. A geração ocorre no navegador do visitante.
+4. Abrir a prévia do PDF. Para letras, escolher a família da fonte e ajustar o tamanho ou usar o ajuste automático; conferir a composição e baixar o resultado. A geração ocorre no navegador do visitante.
 
 Trocar o tipo com uma seleção ativa pede confirmação de descarte. O contador mostra quantas músicas faltam; uma quinta seleção é impedida com uma mensagem clara. Somente registros publicados aparecem para visitantes. Acervo vazio, busca sem resultados e falha ao carregar têm mensagens próprias; falhas de rede oferecem nova tentativa.
 
@@ -43,8 +44,11 @@ Trocar o tipo com uma seleção ativa pede confirmação de descarte. O contador
 - Ordem: letras 1 e 2 na coluna esquerda, letras 3 e 4 na direita. Cada música ocupa um bloco contínuo, sem passar para a outra coluna.
 - Título, artista quando informado e conteúdo; preservar estrofes e quebras de linha explícitas. Linhas longas podem quebrar dentro da coluna.
 - As duas músicas de cada coluna seguem de cima para baixo, com separação visual; não precisam ter alturas iguais.
-- Escolher o maior tamanho comum de fonte do corpo entre 9 e 12 pontos que acomode as quatro músicas, incluindo títulos e espaçamentos. Incorporar uma fonte com os caracteres usados em português.
-- Se não couber a 9 pontos, impedir o download dessa composição e identificar a coluna e as músicas que excedem o espaço. Oferecer acesso à revisão da seleção; o administrador pode editar o conteúdo pelo acervo. Nunca cortar texto, remover versos ou gerar outra página silenciosamente.
+- Oferecer três famílias de fonte: Noto Sans (simples, sem serifa; padrão), Noto Serif (clássica, com serifa) e Noto Sans Mono (monoespaçada). Distribuir os arquivos de fonte e suas licenças com a aplicação e incorporar a fonte selecionada no PDF, incluindo os caracteres usados em português. Usar as mesmas métricas de fonte na medição e na composição final.
+- Um seletor de família e controles de aumentar/diminuir ou informar o tamanho ajustam as quatro letras em conjunto. Proposta inicial: corpo de 9 a 16 pontos, em passos de 1 ponto; títulos e artista acompanham proporcionalmente. Os controles ficam disponíveis para qualquer visitante, sem alterar o conteúdo salvo no acervo.
+- O modo inicial é automático: escolher o maior tamanho comum de fonte do corpo entre 9 e 16 pontos que acomode as quatro músicas na família escolhida, incluindo títulos e espaçamentos. Alterar manualmente o tamanho desativa o ajuste automático; um botão permite voltar a ele.
+- Recalcular a composição e atualizar a prévia sempre que família, tamanho, ordem ou seleção mudar. No modo manual, respeitar o tamanho escolhido, sem reduzi-lo silenciosamente. No modo automático, trocar a família calcula novamente o maior tamanho que cabe.
+- Se não couber no tamanho manual escolhido, ou a 9 pontos no modo automático, impedir o download dessa composição e identificar a coluna e as músicas que excedem o espaço. Oferecer redução do tamanho, ajuste automático ou revisão da seleção; o administrador pode editar o conteúdo pelo acervo. Nunca cortar texto, remover versos ou gerar outra página silenciosamente.
 - A prévia usa o próprio PDF gerado para corresponder ao download.
 
 ## PDF de cifras
@@ -106,6 +110,7 @@ A criação de contas externas, a configuração do Supabase e a publicação de
 
 - Conferir visualmente PDFs gerados: quatro letras em exatamente uma página A4, com duas por coluna, e quatro cifras com cada início em uma nova página.
 - Cobrir letras acentuadas, estrofes, linhas longas, textos no limite de tamanho, cifras com espaços e cifras com mais de uma página.
+- Conferir cada família de fonte e os limites de tamanho das letras; mudanças devem atualizar a prévia, preservar a escolha manual e bloquear composições que excedam a folha. Validar também o retorno ao ajuste automático e a incorporação das fontes no PDF.
 - Validar importadores com documentos de exemplo criados para os testes e, quando disponibilizados, arquivos reais do usuário. Não preencher o acervo com letras de terceiros.
 - Verificar erros de arquivo, falhas parciais de lote e retentativas sem duplicação.
 - Testar políticas reais do Supabase: visitante e outra conta autenticada não podem alterar dados nem acessar rascunhos ou originais; a conta administrativa pode realizar as operações autorizadas.
