@@ -172,6 +172,18 @@ export function AdminWorkspace({
     setItems((current) => current.filter((entry) => entry.id !== item.id));
     setNotice("");
   }
+  function markAllReviewed() {
+    if (locked) return;
+    setItems((current) =>
+      current.map((item) =>
+        item.status !== "saved" &&
+        item.draft.title.trim() &&
+        item.draft.content.trim()
+          ? { ...item, reviewed: true }
+          : item,
+      ),
+    );
+  }
   async function saveOne(item: ImportItem, status: SongStatus) {
     setNotice("");
     patch(item.id, { status: "saving", error: null, saveAttempted: true });
@@ -349,18 +361,7 @@ export function AdminWorkspace({
                     disabled={
                       locked || !validItems.some((item) => !item.reviewed)
                     }
-                    onClick={() => {
-                      if (locked) return;
-                      setItems((current) =>
-                        current.map((item) =>
-                          item.status !== "saved" &&
-                          item.draft.title.trim() &&
-                          item.draft.content.trim()
-                            ? { ...item, reviewed: true }
-                            : item,
-                        ),
-                      );
-                    }}
+                    onClick={markAllReviewed}
                   >
                     Marcar todos como revisados
                   </button>
@@ -409,13 +410,26 @@ export function AdminWorkspace({
                   onSave={(status) => void saveOne(item, status)}
                 />
               ))}
-              <div className="form-actions bulk-actions">
+              <div
+                className="form-actions bulk-actions"
+                role="group"
+                aria-label="Ações do lote"
+              >
                 <button
                   className="button secondary"
                   disabled={locked || !validItems.length}
                   onClick={() => void saveBatch("draft")}
                 >
                   Salvar rascunhos
+                </button>
+                <button
+                  className="button secondary"
+                  disabled={
+                    locked || !validItems.some((item) => !item.reviewed)
+                  }
+                  onClick={markAllReviewed}
+                >
+                  Marcar todos como revisados
                 </button>
                 <button
                   className="button primary"

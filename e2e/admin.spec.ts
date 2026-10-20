@@ -49,6 +49,7 @@ test("removes one of four PDF songs and reviews the other three together on mobi
     page.getByRole("textbox", { name: "Título", exact: true }),
   ).toHaveCount(3);
   await page
+    .getByRole("group", { name: "Ações do lote", exact: true })
     .getByRole("button", { name: "Marcar todos como revisados", exact: true })
     .click();
   const checks = page.getByRole("checkbox", { name: /Conferi o texto/ });

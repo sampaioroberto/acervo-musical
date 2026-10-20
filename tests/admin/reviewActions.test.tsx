@@ -1,7 +1,13 @@
 import { it, expect, vi, beforeEach, afterEach } from "vitest";
 import { File as NodeFile } from "node:buffer";
 import { PDFDocument, StandardFonts } from "pdf-lib";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { AdminWorkspace } from "../../src/admin/AdminWorkspace";
 import { memoryRepo } from "./memoryRepo";
 
@@ -60,15 +66,18 @@ it("removes one imported song and publishes only the remaining reviewed songs", 
       .map((el) => (el as HTMLInputElement).value),
   ).toEqual(["Musica 1", "Musica 3", "Musica 4"]);
   fireEvent.click(
-    screen.getByRole("button", { name: "Marcar todos como revisados" }),
+    within(screen.getByRole("group", { name: "Ações do lote" })).getByRole(
+      "button",
+      { name: "Marcar todos como revisados" },
+    ),
   );
   screen
     .getAllByRole("checkbox", { name: /Conferi o texto/ })
     .forEach((el) => expect(el).toBeChecked());
   expect(records.size).toBe(0);
-  expect(
-    screen.getByRole("button", { name: "Marcar todos como revisados" }),
-  ).toBeDisabled();
+  screen
+    .getAllByRole("button", { name: "Marcar todos como revisados" })
+    .forEach((button) => expect(button).toBeDisabled());
   fireEvent.click(screen.getByRole("button", { name: "Publicar revisados" }));
   await waitFor(() =>
     expect(
@@ -97,7 +106,7 @@ it("marks only complete drafts, resets review on edits and lets the last item be
   fireEvent.change(contents[0], { target: { value: "Verso" } });
   fireEvent.change(titles[1], { target: { value: "Incompleta" } });
   fireEvent.click(
-    screen.getByRole("button", { name: "Marcar todos como revisados" }),
+    screen.getAllByRole("button", { name: "Marcar todos como revisados" })[0],
   );
   const checks = screen.getAllByRole("checkbox", { name: /Conferi o texto/ });
   expect(checks[0]).toBeChecked();
