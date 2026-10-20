@@ -102,6 +102,9 @@ test("separates PDF chord pages, joins a continuation and lets visitors consult 
     .click();
   await expect(
     page.getByRole("textbox", { name: "Título", exact: true }),
+  ).toHaveCount(1);
+  await expect(
+    page.getByRole("textbox", { name: "Título", exact: true }),
   ).toHaveValue("Outra manhã");
   await page
     .getByRole("checkbox", {
