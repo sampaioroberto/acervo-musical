@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      events: {
+        Row: {
+          id: string;
+          title: string;
+          event_date: string;
+          status: string;
+          songs: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          title: string;
+          event_date: string;
+          status?: string;
+          songs?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          event_date?: string;
+          status?: string;
+          songs?: Json;
+          updated_at?: string;
+        };
+        ComputedFields: never;
+        Relationships: [];
+      };
       song_originals: {
         Row: {
           id: string;
@@ -87,6 +117,11 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      save_event: {
+        Args: { p_event: Json; p_song_ids: string[] };
+        Returns: Json;
+      };
+      delete_event: { Args: { p_id: string }; Returns: Json };
       delete_song: { Args: { p_id: string }; Returns: Json };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       save_song: { Args: { p_original?: Json; p_song: Json }; Returns: Json };

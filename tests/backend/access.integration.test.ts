@@ -4,6 +4,7 @@ import { Client } from "pg";
 import { randomUUID } from "node:crypto";
 import { createSupabaseRepository } from "../../src/backend/supabaseRepository";
 import { createAuth } from "../../src/backend/auth";
+import { createEventRepository } from "../../src/backend/eventRepository";
 let admin: SupabaseClient,
   other: SupabaseClient,
   anon: SupabaseClient,
@@ -14,6 +15,9 @@ let adminId = "",
   previousAdmin: string | null = null;
 const songId = randomUUID(),
   draftId = randomUUID();
+const eventId = randomUUID(),
+  eventDraftId = randomUUID(),
+  eventSourceId = randomUUID();
 const ref = {
   id: songId,
   path: songId + "/original.pdf",
@@ -70,6 +74,14 @@ beforeAll(async () => {
 afterAll(async () => {
   if (db) {
     await db
+      .query("delete from public.events where id=any($1::uuid[])", [
+        [eventId, eventDraftId],
+      ])
+      .catch(() => {});
+    await db
+      .query("delete from public.songs where id=$1", [eventSourceId])
+      .catch(() => {});
+    await db
       .query("delete from public.songs where id=any($1::uuid[])", [
         [songId, draftId],
       ])
@@ -94,6 +106,73 @@ afterAll(async () => {
     if (otherId) await service.auth.admin.deleteUser(otherId);
     await service.storage.from("originals").remove([ref.path]);
   }
+});
+it("protects event drafts and writes, preserves historical snapshots and rejects invalid updates atomically", async () => {
+  const songs = createSupabaseRepository(admin);
+  const repo = createEventRepository(admin);
+  const source = {
+    id: eventSourceId,
+    title: "Versão histórica",
+    artist: "",
+    kind: "lyrics" as const,
+    content: "Texto do dia",
+    status: "published" as const,
+    createdAt: "",
+    updatedAt: "",
+  };
+  await songs.save(source, null);
+  const input = {
+    id: eventId,
+    title: "Cora",
+    date: "2026-05-16",
+    status: "published" as const,
+    songIds: [eventSourceId],
+  };
+  const saved = await repo.save(input);
+  expect(saved.songs[0].content).toBe("Texto do dia");
+  await repo.save({ ...input, id: eventDraftId, status: "draft", songIds: [] });
+  expect(
+    await createEventRepository(anon).getPublished(eventDraftId),
+  ).toBeNull();
+  expect(await createEventRepository(other).getAdmin(eventDraftId)).toBeNull();
+  expect(
+    (
+      await other.rpc("save_event", {
+        p_event: input,
+        p_song_ids: [eventSourceId],
+      })
+    ).error,
+  ).not.toBeNull();
+  expect(
+    (await other.rpc("delete_event", { p_id: eventId })).error,
+  ).not.toBeNull();
+  await songs.save({ ...source, content: "Texto editado" }, null);
+  await songs.deleteSong(eventSourceId);
+  expect(
+    (await repo.save({ ...input, title: "Cora histórico" })).songs[0].content,
+  ).toBe("Texto do dia");
+  const rejected = await admin.rpc("save_event", {
+    p_event: { ...input, title: "Não salvar" },
+    p_song_ids: [randomUUID()],
+  });
+  expect(rejected.error).not.toBeNull();
+  expect((await createEventRepository(anon).getPublished(eventId))?.title).toBe(
+    "Cora histórico",
+  );
+  expect(
+    (
+      await anon
+        .from("events")
+        .insert({
+          id: randomUUID(),
+          title: "Intruso",
+          event_date: "2026-01-01",
+          status: "draft",
+        })
+    ).error,
+  ).not.toBeNull();
+  await repo.remove(eventId);
+  expect(await createEventRepository(anon).getPublished(eventId)).toBeNull();
 });
 it("enforces public read, administrator writes, private drafts, private originals and RPC authorization", async () => {
   const repo = createSupabaseRepository(admin);
@@ -131,15 +210,13 @@ it("enforces public read, administrator writes, private drafts, private original
   expect((await repo.getAdmin(songId))?.title).toBe("Canção de teste");
   expect(
     (
-      await anon
-        .from("songs")
-        .insert({
-          id: randomUUID(),
-          title: "Inválido",
-          kind: "lyrics",
-          content: "Voz",
-          status: "published",
-        })
+      await anon.from("songs").insert({
+        id: randomUUID(),
+        title: "Inválido",
+        kind: "lyrics",
+        content: "Voz",
+        status: "published",
+      })
     ).error,
   ).not.toBeNull();
   expect(
