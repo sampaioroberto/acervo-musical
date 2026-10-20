@@ -1,7 +1,59 @@
-import {it,expect} from 'vitest';import {createImportItem} from '../../src/admin/batch';import {saveImport} from '../../src/admin/saveImport';import {memoryRepo} from './memoryRepo';
-function item(){return {...createImportItem(new File(['%PDF-'],'Canção.pdf'),'lyrics'),draft:{title:'Canção',artist:'',kind:'lyrics' as const,content:'Voz e coração'},status:'review' as const}}
-it('requires review before public writes and valid content even for drafts',async()=>{const {repo,records,files}=memoryRepo();const i=item();await expect(saveImport(i,'published',repo)).rejects.toThrow('Revise o conteúdo antes de publicar');expect(records.size).toBe(0);expect(files.size).toBe(0);await expect(saveImport({...i,draft:{...i.draft,content:' '}},'draft',repo)).rejects.toThrow();expect(records.size).toBe(0)});
-it('saves a reviewed record and reconciles a committed response lost in transit',async()=>{const {repo,records,files,state}=memoryRepo();const i={...item(),reviewed:true};state.saveFailure='after';expect((await saveImport(i,'published',repo)).id).toBe(i.id);state.saveFailure='none';await saveImport(i,'published',repo);expect(records.size).toBe(1);expect(files.size).toBe(1)});
-it('removes confirmed orphans but never removes a file when commit outcome is unknown',async()=>{const first=memoryRepo(),i={...item(),reviewed:true};first.state.saveFailure='before';await expect(saveImport(i,'published',first.repo)).rejects.toThrow();expect(first.files.size).toBe(0);expect(i.draft.content).toBe('Voz e coração');const second=memoryRepo();second.state.saveFailure='unknown';await expect(saveImport(i,'published',second.repo)).rejects.toThrow();expect(second.records.size).toBe(1);expect(second.files.has(i.original.path)).toBe(true)});
-it('allows manual recovery without attaching a document that failed import',async()=>{const {repo,records,files}=memoryRepo();const i={...item(),attachOriginal:false};await saveImport(i,'draft',repo);expect(records.get(i.id)?.original).toBeNull();expect(files.size).toBe(0)});
-
+import { it, expect } from "vitest";
+import { createImportItem } from "../../src/admin/batch";
+import { saveImport } from "../../src/admin/saveImport";
+import { memoryRepo } from "./memoryRepo";
+function item() {
+  return {
+    ...createImportItem(new File(["%PDF-"], "Canção.pdf"), "lyrics"),
+    draft: {
+      title: "Canção",
+      artist: "",
+      kind: "lyrics" as const,
+      content: "Voz e coração",
+    },
+    status: "review" as const,
+  };
+}
+it("requires review before public writes and valid content even for drafts", async () => {
+  const { repo, records, files } = memoryRepo();
+  const i = item();
+  await expect(saveImport(i, "published", repo)).rejects.toThrow(
+    "Revise o conteúdo antes de publicar",
+  );
+  expect(records.size).toBe(0);
+  expect(files.size).toBe(0);
+  await expect(
+    saveImport({ ...i, draft: { ...i.draft, content: " " } }, "draft", repo),
+  ).rejects.toThrow();
+  expect(records.size).toBe(0);
+});
+it("saves a reviewed record and reconciles a committed response lost in transit", async () => {
+  const { repo, records, files, state } = memoryRepo();
+  const i = { ...item(), reviewed: true };
+  state.saveFailure = "after";
+  expect((await saveImport(i, "published", repo)).id).toBe(i.id);
+  state.saveFailure = "none";
+  await saveImport(i, "published", repo);
+  expect(records.size).toBe(1);
+  expect(files.size).toBe(1);
+});
+it("removes confirmed orphans but never removes a file when commit outcome is unknown", async () => {
+  const first = memoryRepo(),
+    i = { ...item(), reviewed: true };
+  first.state.saveFailure = "before";
+  await expect(saveImport(i, "published", first.repo)).rejects.toThrow();
+  expect(first.files.size).toBe(0);
+  expect(i.draft.content).toBe("Voz e coração");
+  const second = memoryRepo();
+  second.state.saveFailure = "unknown";
+  await expect(saveImport(i, "published", second.repo)).rejects.toThrow();
+  expect(second.records.size).toBe(1);
+  expect(second.files.has(i.original.path)).toBe(true);
+});
+it("allows manual recovery without attaching a document that failed import", async () => {
+  const { repo, records, files } = memoryRepo();
+  const i = { ...item(), attachOriginal: false };
+  await saveImport(i, "draft", repo);
+  expect(records.get(i.id)?.original).toBeNull();
+  expect(files.size).toBe(0);
+});

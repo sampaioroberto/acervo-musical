@@ -26,6 +26,7 @@ site_url = "http://127.0.0.1:5173"
 additional_redirect_urls = ["http://127.0.0.1:5173/**"]
 enable_signup = false
 [auth.email]
+# Manter o provedor de e-mail ativo para login; [auth].enable_signup bloqueia novos cadastros.
 enable_signup = true
 enable_confirmations = false
 [edge_runtime]

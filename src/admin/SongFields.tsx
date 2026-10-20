@@ -1,5 +1,65 @@
-import {useId} from 'react';import type {SongDraft,SongKind} from '../catalog/types';
-export function SongFields({value,onChange,disabled=false}:{value:SongDraft;onChange:(s:SongDraft)=>void;disabled?:boolean}){
- const id=useId();return <div className="song-fields"><div className="field-row"><label htmlFor={id+'title'}>Título<input id={id+'title'} value={value.title} onChange={e=>onChange({...value,title:e.target.value})} required disabled={disabled}/></label><label htmlFor={id+'artist'}>Artista <span className="optional">(opcional)</span><input id={id+'artist'} value={value.artist} onChange={e=>onChange({...value,artist:e.target.value})} disabled={disabled}/></label></div><label htmlFor={id+'kind'}>Tipo de conteúdo<select id={id+'kind'} value={value.kind} onChange={e=>onChange({...value,kind:e.target.value as SongKind})} disabled={disabled}><option value="lyrics">Letra</option><option value="chords">Cifra</option></select></label><label htmlFor={id+'content'}>Conteúdo<textarea id={id+'content'} className={value.kind==='chords'?'mono':''} value={value.content} onChange={e=>onChange({...value,content:e.target.value})} rows={11} wrap={value.kind==='chords'?'off':'soft'} required disabled={disabled}/></label></div>
+import { useId } from "react";
+import type { SongDraft, SongKind } from "../catalog/types";
+export function SongFields({
+  value,
+  onChange,
+  disabled = false,
+}: {
+  value: SongDraft;
+  onChange: (s: SongDraft) => void;
+  disabled?: boolean;
+}) {
+  const id = useId();
+  return (
+    <div className="song-fields">
+      <div className="field-row">
+        <label htmlFor={id + "title"}>
+          Título
+          <input
+            id={id + "title"}
+            value={value.title}
+            onChange={(e) => onChange({ ...value, title: e.target.value })}
+            required
+            disabled={disabled}
+          />
+        </label>
+        <label htmlFor={id + "artist"}>
+          Artista <span className="optional">(opcional)</span>
+          <input
+            id={id + "artist"}
+            value={value.artist}
+            onChange={(e) => onChange({ ...value, artist: e.target.value })}
+            disabled={disabled}
+          />
+        </label>
+      </div>
+      <label htmlFor={id + "kind"}>
+        Tipo de conteúdo
+        <select
+          id={id + "kind"}
+          value={value.kind}
+          onChange={(e) =>
+            onChange({ ...value, kind: e.target.value as SongKind })
+          }
+          disabled={disabled}
+        >
+          <option value="lyrics">Letra</option>
+          <option value="chords">Cifra</option>
+        </select>
+      </label>
+      <label htmlFor={id + "content"}>
+        Conteúdo
+        <textarea
+          id={id + "content"}
+          className={value.kind === "chords" ? "mono" : ""}
+          value={value.content}
+          onChange={(e) => onChange({ ...value, content: e.target.value })}
+          rows={11}
+          wrap={value.kind === "chords" ? "off" : "soft"}
+          required
+          disabled={disabled}
+        />
+      </label>
+    </div>
+  );
 }
-

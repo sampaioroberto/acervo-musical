@@ -1,10 +1,48 @@
-import JSZip from 'jszip';import {PDFDocument} from 'pdf-lib';import fontkit from '@pdf-lib/fontkit';import {mkdir,readFile,writeFile} from 'node:fs/promises';
-const dir=new URL('../tests/fixtures/',import.meta.url);await mkdir(dir,{recursive:true});
-const zip=new JSZip();const date=new Date('2000-01-01T00:00:00Z');const add=(name,text)=>zip.file(name,text,{date});
-add('[Content_Types].xml','<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
-add('_rels/.rels','<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
-add('word/document.xml','<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Canção de teste</w:t></w:r></w:p><w:p><w:r><w:t>C</w:t><w:tab/><w:t>G</w:t><w:br/><w:t>Voz e coração</w:t></w:r></w:p><w:p/><w:p><w:r><w:t>Novo verso &lt;script&gt;</w:t></w:r></w:p></w:body></w:document>');
-await writeFile(new URL('letra com espaços.docx',dir),await zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'}));
-const pdf=await PDFDocument.create();pdf.registerFontkit(fontkit);pdf.setCreationDate(date);pdf.setModificationDate(date);const font=await pdf.embedFont(await readFile(new URL('../public/fonts/NotoSansMono-Regular.ttf',import.meta.url)),{subset:true});const page=pdf.addPage([595.276,841.89]);page.drawText('Canção de teste',{font,size:14,x:40,y:780});page.drawText('C',{font,size:11,x:40,y:740});page.drawText('G',{font,size:11,x:66.4,y:740});page.drawText('Voz e coração',{font,size:11,x:40,y:724});page.drawText('Novo verso',{font,size:11,x:40,y:690});await writeFile(new URL('cifra.pdf',dir),await pdf.save());
-const empty=await PDFDocument.create();empty.setCreationDate(date);empty.setModificationDate(date);empty.addPage();await writeFile(new URL('vazio.pdf',dir),await empty.save());console.log('Fixtures autorais DOCX/PDF geradas.');
-
+import JSZip from "jszip";
+import { PDFDocument } from "pdf-lib";
+import fontkit from "@pdf-lib/fontkit";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+const dir = new URL("../tests/fixtures/", import.meta.url);
+await mkdir(dir, { recursive: true });
+const zip = new JSZip();
+const date = new Date("2000-01-01T00:00:00Z");
+const add = (name, text) => zip.file(name, text, { date });
+add(
+  "[Content_Types].xml",
+  '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>',
+);
+add(
+  "_rels/.rels",
+  '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>',
+);
+add(
+  "word/document.xml",
+  '<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>Canção de teste</w:t></w:r></w:p><w:p><w:r><w:t>C</w:t><w:tab/><w:t>G</w:t><w:br/><w:t>Voz e coração</w:t></w:r></w:p><w:p/><w:p><w:r><w:t>Novo verso &lt;script&gt;</w:t></w:r></w:p></w:body></w:document>',
+);
+await writeFile(
+  new URL("letra com espaços.docx", dir),
+  await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }),
+);
+const pdf = await PDFDocument.create();
+pdf.registerFontkit(fontkit);
+pdf.setCreationDate(date);
+pdf.setModificationDate(date);
+const font = await pdf.embedFont(
+  await readFile(
+    new URL("../public/fonts/NotoSansMono-Regular.ttf", import.meta.url),
+  ),
+  { subset: true },
+);
+const page = pdf.addPage([595.276, 841.89]);
+page.drawText("Canção de teste", { font, size: 14, x: 40, y: 780 });
+page.drawText("C", { font, size: 11, x: 40, y: 740 });
+page.drawText("G", { font, size: 11, x: 66.4, y: 740 });
+page.drawText("Voz e coração", { font, size: 11, x: 40, y: 724 });
+page.drawText("Novo verso", { font, size: 11, x: 40, y: 690 });
+await writeFile(new URL("cifra.pdf", dir), await pdf.save());
+const empty = await PDFDocument.create();
+empty.setCreationDate(date);
+empty.setModificationDate(date);
+empty.addPage();
+await writeFile(new URL("vazio.pdf", dir), await empty.save());
+console.log("Fixtures autorais DOCX/PDF geradas.");
