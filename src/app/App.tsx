@@ -2,9 +2,13 @@ import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Music2, ArrowUpRight } from "lucide-react";
 import { CatalogPage } from "../catalog/CatalogPage";
 import { createDemoRepository } from "../catalog/demoRepository";
-import type { Song } from "../catalog/types";
+import type { PrintSong } from "../pdf/types";
+import { createDemoEvents } from "../events/demo";
+import { EventDetail, EventsPage, LatestEvent } from "../events/EventPages";
+import "../events/events.css";
 import { readConfig } from "./config";
 import { createBackend } from "../backend/client";
+import { NavigationProvider, useNavigationGuard } from "./NavigationGuard";
 const PdfComposer = lazy(() =>
   import("../pdf/PdfComposer").then((module) => ({
     default: module.PdfComposer,
@@ -16,8 +20,19 @@ const AdminPage = lazy(() =>
   })),
 );
 export function App() {
+  return (
+    <NavigationProvider>
+      <AppContent />
+    </NavigationProvider>
+  );
+}
+function AppContent() {
+  const { requestLeave } = useNavigationGuard();
   const [route, setRoute] = useState(location.hash);
-  const [composition, setComposition] = useState<Song[] | null>(null);
+  const [composition, setComposition] = useState<{
+    songs: PrintSong[];
+    fileName?: string;
+  } | null>(null);
   const services = useMemo(() => {
     try {
       const config = readConfig({
@@ -25,21 +40,34 @@ export function App() {
         VITE_SUPABASE_PUBLISHABLE_KEY: import.meta.env
           .VITE_SUPABASE_PUBLISHABLE_KEY,
       });
-      return config.mode === "supabase"
-        ? { mode: "supabase" as const, ...createBackend(config) }
-        : { mode: "demo" as const, repository: createDemoRepository() };
+      if (config.mode === "supabase")
+        return { mode: "supabase" as const, ...createBackend(config) };
+      const repository = createDemoRepository();
+      return {
+        mode: "demo" as const,
+        repository,
+        events: createDemoEvents(repository),
+      };
     } catch (error) {
       return { mode: "error" as const, message: (error as Error).message };
     }
   }, []);
   useEffect(() => {
     const update = () => {
+      if (location.hash !== route && !requestLeave()) {
+        history.replaceState(
+          null,
+          "",
+          location.pathname + location.search + route,
+        );
+        return;
+      }
       setRoute(location.hash);
       setComposition(null);
     };
     window.addEventListener("hashchange", update);
     return () => window.removeEventListener("hashchange", update);
-  }, []);
+  }, [route, requestLeave]);
   if (services.mode === "error")
     return (
       <main className="page admin-page">
@@ -48,6 +76,9 @@ export function App() {
       </main>
     );
   const admin = route.startsWith("#/admin");
+  const eventPage = route === "#/events" || route.startsWith("#/events/");
+  const compose = (songs: PrintSong[], fileName?: string) =>
+    setComposition({ songs, fileName });
   return (
     <>
       <header className="site-header">
@@ -60,8 +91,11 @@ export function App() {
           </span>
         </a>
         <nav aria-label="Navegação principal">
-          <a className={!admin ? "current" : ""} href="#/">
+          <a className={!admin && !eventPage ? "current" : ""} href="#/">
             Acervo
+          </a>
+          <a className={eventPage ? "current" : ""} href="#/events">
+            Eventos
           </a>
           <a className="admin-link" href="#/admin">
             Administração
@@ -86,7 +120,12 @@ export function App() {
       >
         {admin ? (
           services.mode === "supabase" ? (
-            <AdminPage repo={services.repository} auth={services.auth} />
+            <AdminPage
+              repo={services.repository}
+              auth={services.auth}
+              events={services.events}
+              eventMode={route.startsWith("#/admin/events")}
+            />
           ) : (
             <main className="page admin-page">
               <h1>Administração</h1>
@@ -96,15 +135,28 @@ export function App() {
               </a>
             </main>
           )
+        ) : eventPage ? (
+          route === "#/events" ? (
+            <EventsPage repository={services.events} />
+          ) : (
+            <EventDetail
+              repository={services.events}
+              id={route.slice("#/events/".length)}
+              onCompose={compose}
+            />
+          )
         ) : (
-          <CatalogPage
-            repository={services.repository}
-            onCompose={setComposition}
-          />
+          <>
+            <div className="page latest-event-container">
+              <LatestEvent repository={services.events} />
+            </div>
+            <CatalogPage repository={services.repository} onCompose={compose} />
+          </>
         )}
         {composition && (
           <PdfComposer
-            songs={composition}
+            songs={composition.songs}
+            fileName={composition.fileName}
             onClose={() => setComposition(null)}
           />
         )}

@@ -4,13 +4,21 @@ import type { AuthPort, Access, AuthChange } from "../backend/auth";
 import { LoginForm } from "./LoginForm";
 import { AdminWorkspace } from "./AdminWorkspace";
 import "./admin.css";
+import { EventAdmin } from "../events/EventAdmin";
+import type { EventRepository } from "../events/types";
+import { useNavigationGuard } from "../app/NavigationGuard";
 export function AdminPage({
   repo,
   auth,
+  events,
+  eventMode = false,
 }: {
   repo: AdminRepository;
   auth: AuthPort;
+  events?: EventRepository;
+  eventMode?: boolean;
 }) {
+  const { requestLeave } = useNavigationGuard();
   const [access, setAccess] = useState<Access | "checking" | "error">(
       "checking",
     ),
@@ -39,6 +47,7 @@ export function AdminPage({
     };
   }, [auth, revision]);
   async function signOut() {
+    if (!requestLeave()) return;
     setError("");
     try {
       await auth.signOut();
@@ -49,11 +58,30 @@ export function AdminPage({
   }
   if (access === "admin")
     return (
-      <AdminWorkspace
-        repo={repo}
-        onSignOut={() => void signOut()}
-        signOutError={error}
-      />
+      <>
+        <nav className="admin-tabs" aria-label="Administração do site">
+          <a href="#/admin" className={!eventMode ? "current" : ""}>
+            Músicas
+          </a>
+          <a href="#/admin/events" className={eventMode ? "current" : ""}>
+            Eventos
+          </a>
+        </nav>
+        {eventMode && events ? (
+          <EventAdmin
+            songsRepo={repo}
+            eventsRepo={events}
+            onSignOut={() => void signOut()}
+            signOutError={error}
+          />
+        ) : (
+          <AdminWorkspace
+            repo={repo}
+            onSignOut={() => void signOut()}
+            signOutError={error}
+          />
+        )}
+      </>
     );
   return (
     <main className="page admin-page">

@@ -11,6 +11,7 @@ type PreviewState = {
 export function usePdfPreview(
   songs: readonly PrintSong[],
   options: LyricOptions,
+  fileName?: string,
 ) {
   const key = JSON.stringify([songs, options]);
   const [state, setState] = useState<PreviewState>({
@@ -57,9 +58,10 @@ export function usePdfPreview(
     const anchor = document.createElement("a");
     anchor.href = url;
     anchor.download =
-      songs[0]?.kind === "chords"
+      fileName ??
+      (songs[0]?.kind === "chords"
         ? "louvores-cora-cifras.pdf"
-        : "louvores-cora-letras.pdf";
+        : "louvores-cora-letras.pdf");
     document.body.append(anchor);
     anchor.click();
     anchor.remove();

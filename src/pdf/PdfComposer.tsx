@@ -7,15 +7,17 @@ import { Dialog } from "../app/Dialog";
 export function PdfComposer({
   songs,
   onClose,
+  fileName,
 }: {
   songs: readonly PrintSong[];
   onClose: () => void;
+  fileName?: string;
 }) {
   const [options, setOptions] = useState<LyricOptions>({
     family: "sans",
     sizing: { mode: "auto" },
   });
-  const preview = usePdfPreview(songs, options);
+  const preview = usePdfPreview(songs, options, fileName);
   const lyrics = songs[0]?.kind === "lyrics";
   const fontSize =
     options.sizing.mode === "manual"

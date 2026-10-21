@@ -13,6 +13,8 @@ export function ImportReview({
   onJoin,
   onSplit,
   onRemove,
+  onSplitText,
+  publishOnly = false,
   continuation = false,
 }: {
   item: ImportItem;
@@ -23,6 +25,8 @@ export function ImportReview({
   onJoin?: () => void;
   onSplit?: () => void;
   onRemove?: () => void;
+  onSplitText?: () => void;
+  publishOnly?: boolean;
   continuation?: boolean;
 }) {
   const [preview, setPreview] = useState<SongDraft | null>(null);
@@ -138,6 +142,16 @@ export function ImportReview({
         Conferi o texto, as quebras de linha e o alinhamento.
       </label>
       <div className="form-actions">
+        {onSplitText && (
+          <button
+            className="button secondary"
+            type="button"
+            disabled={locked || item.saveAttempted}
+            onClick={onSplitText}
+          >
+            Dividir em músicas
+          </button>
+        )}
         <button
           className="button secondary"
           type="button"
@@ -147,14 +161,16 @@ export function ImportReview({
           <Eye size={15} />
           Ver prévia
         </button>
-        <button
-          className="button secondary"
-          type="button"
-          disabled={!valid || locked}
-          onClick={() => onSave("draft")}
-        >
-          Salvar rascunho
-        </button>
+        {!publishOnly && (
+          <button
+            className="button secondary"
+            type="button"
+            disabled={!valid || locked}
+            onClick={() => onSave("draft")}
+          >
+            Salvar rascunho
+          </button>
+        )}
         <button
           className="button primary"
           type="button"

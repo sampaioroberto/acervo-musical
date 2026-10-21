@@ -6,7 +6,7 @@ Endereço público: https://sampaioroberto.github.io/louvores-cora/.
 
 ## Funcionalidades
 
-- Busca por título e artista, com seleção e ordenação de uma ou mais músicas.
+- Busca por título ou trecho, com seleção e ordenação de uma ou mais músicas.
 - Letras: até quatro por folha A4 vertical, com até duas em cada coluna. A quinta inicia outra folha. Noto Sans, Noto Serif ou Noto Sans Mono; fonte de 9 a 16 pontos, manual ou automática, com bloqueio quando não cabe.
 - Cifras: cada música começa em uma nova página, com espaços preservados e fonte monoespaçada. Uma cifra longa pode ocupar mais páginas.
 - Prévia do próprio PDF e download no navegador.
@@ -15,6 +15,8 @@ Endereço público: https://sampaioroberto.github.io/louvores-cora/.
 - Cadastro manual de letras e cifras, com título em negrito na tela e no PDF. Após publicar, o formulário é limpo para a próxima música.
 - Na revisão, remova músicas individuais do lote ou marque todos os itens completos como revisados antes de publicar. Os formulários pedem apenas título, tipo e conteúdo; a busca pública encontra títulos e trechos, sem distinguir maiúsculas ou acentos.
 - Acervo público no Supabase com rascunhos e arquivos originais privados. As regras do banco autorizam apenas a conta administrativa.
+- Eventos: em Administração → Eventos → Organizar visita, informe nome e data, escolha músicas do acervo ou importe novas e ordene letras e cifras separadamente. Novas músicas revisadas entram no acervo antes de serem adicionadas ao evento; títulos já existentes oferecem reutilização. Arquivos com várias letras podem ser divididos manualmente durante a revisão.
+- Eventos publicados ficam na aba Eventos; o de maior data aparece na página inicial. Visitantes consultam músicas individuais e baixam PDFs individuais ou completos por tipo. Textos e ordem são preservados no evento, mesmo após alterações no acervo. Rascunhos permanecem privados.
 
 ## Executar localmente
 
@@ -42,6 +44,6 @@ Siga [as instruções do GitHub Pages](docs/publication.md). O workflow valida o
 
 ## Limites da importação
 
-Word é lido como texto a partir do XML, sem executar HTML. PDF é reconstruído a partir das posições dos textos selecionáveis. Fontes, imagens, tabelas e layouts complexos dos originais não são copiados fielmente; confira sempre a revisão, especialmente em cifras. Arquivos sem texto útil podem ser cadastrados por colagem manual, sem anexar o original que falhou. Não há OCR, transposição ou divisão automática de várias músicas no mesmo arquivo.
+Word é lido como texto a partir do XML, sem executar HTML. PDF é reconstruído a partir das posições dos textos selecionáveis. Fontes, imagens, tabelas e layouts complexos dos originais não são copiados fielmente; confira sempre a revisão, especialmente em cifras. Arquivos sem texto útil podem ser cadastrados por colagem manual, sem anexar o original que falhou. Não há OCR ou transposição. PDFs de cifras podem ser separados por página e reunidos em continuação; documentos com várias letras exigem divisão manual na revisão do evento.
 
 Os arquivos das fontes e a licença OFL acompanham o código em public/fonts/. Veja também a [especificação](docs/superpowers/specs/2026-10-20-acervo-musical-design.md), o [plano](docs/superpowers/plans/2026-10-20-acervo-musical-implementation.md) e o [registro de verificação](docs/verification.md).
