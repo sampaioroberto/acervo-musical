@@ -34,7 +34,7 @@ test("organizes a visit, imports a song into the archive, preserves snapshots an
     })
     .click();
   await page
-    .getByLabel("Tipo de música", { exact: true })
+    .getByRole("combobox", { name: "Tipo de música", exact: true })
     .selectOption("chords");
   await page
     .getByRole("button", {

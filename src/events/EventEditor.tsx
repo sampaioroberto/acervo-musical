@@ -172,6 +172,7 @@ export function EventEditor({
             <label>
               Tipo de música
               <select
+                aria-label="Tipo de música"
                 value={kind}
                 disabled={busy}
                 onChange={(e) => setKind(e.target.value as SongKind)}
