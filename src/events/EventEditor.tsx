@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { AdminRepository } from "../catalog/repository";
 import type { AdminSong, SongKind, SongStatus } from "../catalog/types";
-import { filterSongs, searchable } from "../catalog/search";
+import { filterSongs } from "../catalog/search";
 import type { ArchiveEvent, EventRepository, EventSong } from "./types";
-import { validateEvent } from "./model";
+import { validateEvent, songTitleKey, moveEventSong } from "./model";
 import { EventImporter } from "./EventImporter";
 import { useEditorLeaveGuard } from "../app/NavigationGuard";
 export function EventEditor({
@@ -61,10 +61,9 @@ export function EventEditor({
     };
   }, [songsRepo, retry]);
   function add(song: EventSong) {
-    const titleKey = (title: string) => searchable(title).replace(/\s+/gu, " ");
     const matches = (other: EventSong) =>
       other.kind !== song.kind &&
-      titleKey(other.title) === titleKey(song.title);
+      songTitleKey(other.title) === songTitleKey(song.title);
     const counterpart = [...catalog, ...importedSongs.current.values()].find(
       (other) => other.status === "published" && matches(other),
     );
@@ -94,16 +93,7 @@ export function EventEditor({
     add(song);
   }
   function move(song: EventSong, delta: number) {
-    setSelected((current) => {
-      const same = current.filter((item) => item.kind === song.kind),
-        target = same[same.findIndex((item) => item.id === song.id) + delta];
-      if (!target) return current;
-      const copy = [...current],
-        a = copy.findIndex((item) => item.id === song.id),
-        b = copy.findIndex((item) => item.id === target.id);
-      [copy[a], copy[b]] = [copy[b], copy[a]];
-      return copy;
-    });
+    setSelected((current) => moveEventSong(current, song.id, delta));
   }
   async function save(status: SongStatus) {
     if (busy || pending) return;
@@ -233,6 +223,9 @@ export function EventEditor({
         </section>
         <section aria-label="Músicas do evento">
           <h3>Músicas do evento</h3>
+          <p className="catalog-hint">
+            A ordem das músicas em comum acompanha as duas listas.
+          </p>
           {(["lyrics", "chords"] as const).map((type) => {
             const group = selected.filter((song) => song.kind === type),
               label = type === "lyrics" ? "letra" : "cifra";

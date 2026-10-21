@@ -1,5 +1,61 @@
 import type { Song } from "../catalog/types";
 import type { EventInput, EventSong } from "./types";
+import { searchable } from "../catalog/search";
+export function songTitleKey(title: string) {
+  return searchable(title).replace(/\s+/gu, " ");
+}
+export function moveEventSong(
+  selection: EventSong[],
+  id: string,
+  delta: number,
+): EventSong[] {
+  const song = selection.find((item) => item.id === id);
+  if (!song) return selection;
+  const positions = selection.flatMap((item, index) =>
+    item.kind === song.kind ? [index] : [],
+  );
+  const from = positions.findIndex((index) => selection[index].id === id);
+  const to = from + delta;
+  if (to < 0 || to >= positions.length) return selection;
+  // Pair repeated titles by occurrence before moving, keeping distinct versions.
+  const counterparts = new Map<string, string[]>();
+  selection
+    .filter((item) => item.kind !== song.kind)
+    .forEach((item) => {
+      const key = songTitleKey(item.title);
+      const queue = counterparts.get(key) ?? [];
+      queue.push(item.id);
+      counterparts.set(key, queue);
+    });
+  const pairedIds = new Map<string, string>();
+  positions.forEach((index) => {
+    const source = selection[index];
+    const counterpart = counterparts.get(songTitleKey(source.title))?.shift();
+    if (counterpart) pairedIds.set(source.id, counterpart);
+  });
+  const next = [...selection];
+  [next[positions[from]], next[positions[to]]] = [
+    next[positions[to]],
+    next[positions[from]],
+  ];
+  const ranks = new Map<string, number>();
+  next
+    .filter((item) => item.kind === song.kind)
+    .forEach((item) => {
+      const counterpartId = pairedIds.get(item.id);
+      if (counterpartId) ranks.set(counterpartId, ranks.size);
+    });
+  const pairedPositions = next.flatMap((item, index) =>
+    item.kind !== song.kind && ranks.has(item.id) ? [index] : [],
+  );
+  const pairedSongs = pairedPositions
+    .map((index) => next[index])
+    .sort((a, b) => ranks.get(a.id)! - ranks.get(b.id)!);
+  pairedPositions.forEach((index, i) => {
+    next[index] = pairedSongs[i];
+  });
+  return next;
+}
 export function formatEventDate(date: string) {
   return date.split("-").reverse().join("/");
 }

@@ -61,6 +61,34 @@ test("organizes a visit, imports a song into the archive, preserves snapshots an
     page.getByRole("heading", { name: "Cifras (1)", exact: true }),
   ).toBeVisible();
   await page
+    .getByRole("button", {
+      name: "Adicionar cifra de Casa de vento",
+      exact: true,
+    })
+    .click();
+  const selection = page.getByRole("region", {
+    name: "Músicas do evento",
+    exact: true,
+  });
+  await page
+    .getByRole("button", { name: "Subir letra Casa de vento", exact: true })
+    .click();
+  for (const list of await selection.getByRole("list").all()) {
+    await expect(list.locator("summary")).toHaveText([
+      "Casa de vento",
+      "Canção do amanhecer",
+    ]);
+  }
+  await page
+    .getByRole("button", { name: "Descer cifra Casa de vento", exact: true })
+    .click();
+  for (const list of await selection.getByRole("list").all()) {
+    await expect(list.locator("summary")).toHaveText([
+      "Canção do amanhecer",
+      "Casa de vento",
+    ]);
+  }
+  await page
     .getByRole("button", { name: "Adicionar músicas novas", exact: true })
     .click();
   await page

@@ -21,3 +21,9 @@ Por solicitação do usuário, o formulário passou a pedir somente a data; o no
 ## Letras e cifras juntas
 
 Ao escolher ou importar uma música para o evento, a outra versão publicada com o mesmo título é adicionada, quando disponível. O título completo é comparado sem acentos, diferenças de caixa ou espaços extras. A versão já selecionada mantém seu conteúdo e posição; retirar uma versão não retira nem reintroduz a outra. A seleção não é alterada automaticamente ao abrir eventos existentes. Testes reproduziram a ausência do pareamento e passaram após a alteração, cobrindo os dois sentidos, rascunhos, títulos apenas semelhantes, remoção independente, repetição sem duplicação e ordem por tipo.
+
+## Ordem sincronizada
+
+As setas de letras e cifras sincronizam a ordem relativa dos títulos presentes nas duas listas. Na outra lista, os lugares de músicas sem correspondência são mantidos; versões retiradas não são recriadas. IDs e textos históricos são preservados. A mesma normalização de título é usada para pareamento e ordenação. Três testes novos falharam antes da implementação e passaram depois, cobrindo subir/descer a partir dos dois tipos, versões ausentes, músicas exclusivas, limites e ausência de mutação. O E2E foi ampliado para mover uma letra, conferir as duas listas, mover uma cifra e conferir novamente antes de gerar os PDFs.
+
+A revisão independente encontrou um caso com versões distintas de mesmo título: a primeira ordenação agrupava todas as ocorrências. Dois testes reproduziram a falha e passaram após a correção. O pareamento agora associa a primeira ocorrência de cada título à primeira do outro tipo antes de mover, a segunda à segunda e assim por diante, mantendo versões sem par em seus lugares.
