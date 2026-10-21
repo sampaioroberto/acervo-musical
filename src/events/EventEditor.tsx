@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { AdminRepository } from "../catalog/repository";
 import type { AdminSong, SongKind, SongStatus } from "../catalog/types";
-import { filterSongs } from "../catalog/search";
+import { filterSongs, searchable } from "../catalog/search";
 import type { ArchiveEvent, EventRepository, EventSong } from "./types";
 import { validateEvent } from "./model";
 import { EventImporter } from "./EventImporter";
@@ -61,20 +61,29 @@ export function EventEditor({
     };
   }, [songsRepo, retry]);
   function add(song: EventSong) {
-    setSelected((current) =>
-      current.some((old) => old.id === song.id)
-        ? current
-        : [
-            ...current,
-            {
-              id: song.id,
-              title: song.title,
-              artist: song.artist,
-              kind: song.kind,
-              content: song.content,
-            },
-          ],
+    const titleKey = (title: string) => searchable(title).replace(/\s+/gu, " ");
+    const matches = (other: EventSong) =>
+      other.kind !== song.kind &&
+      titleKey(other.title) === titleKey(song.title);
+    const counterpart = [...catalog, ...importedSongs.current.values()].find(
+      (other) => other.status === "published" && matches(other),
     );
+    setSelected((current) => {
+      const additions = [song];
+      if (counterpart && !current.some(matches)) additions.push(counterpart);
+      return [
+        ...current,
+        ...additions
+          .filter((next) => !current.some((old) => old.id === next.id))
+          .map((next) => ({
+            id: next.id,
+            title: next.title,
+            artist: next.artist,
+            kind: next.kind,
+            content: next.content,
+          })),
+      ];
+    });
   }
   function imported(song: AdminSong) {
     importedSongs.current.set(song.id, song);
@@ -156,6 +165,10 @@ export function EventEditor({
       <div className="event-editor-grid">
         <section aria-label="Escolher músicas do acervo">
           <h3>Escolher do acervo</h3>
+          <p className="catalog-hint">
+            Letras e cifras com o mesmo título entram juntas. Você pode retirar
+            cada uma separadamente.
+          </p>
           <div className="event-controls">
             <label>
               Tipo de música

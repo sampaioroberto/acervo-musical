@@ -17,3 +17,7 @@ A migração de Eventos foi aplicada pelo SQL Editor ao projeto real, sem inseri
 ## Simplificação por data
 
 Por solicitação do usuário, o formulário passou a pedir somente a data; o nome Cora é preenchido automaticamente ao salvar rascunhos e publicações. Os controles administrativos incluem a data para distinguir visitas. O teste existente foi adaptado e falhou ao encontrar o campo antigo; após a remoção, os 88 testes e o build passaram. O E2E usa apenas a data e continua verificando a proteção contra sair sem salvar, os PDFs e a preservação do histórico.
+
+## Letras e cifras juntas
+
+Ao escolher ou importar uma música para o evento, a outra versão publicada com o mesmo título é adicionada, quando disponível. O título completo é comparado sem acentos, diferenças de caixa ou espaços extras. A versão já selecionada mantém seu conteúdo e posição; retirar uma versão não retira nem reintroduz a outra. A seleção não é alterada automaticamente ao abrir eventos existentes. Testes reproduziram a ausência do pareamento e passaram após a alteração, cobrindo os dois sentidos, rascunhos, títulos apenas semelhantes, remoção independente, repetição sem duplicação e ordem por tipo.

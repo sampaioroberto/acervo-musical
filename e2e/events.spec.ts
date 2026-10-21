@@ -34,6 +34,18 @@ test("organizes a visit, imports a song into the archive, preserves snapshots an
     })
     .click();
   await page
+    .getByRole("button", {
+      name: "Retirar cifra Canção do amanhecer",
+      exact: true,
+    })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Retirar letra Canção do amanhecer",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page
     .getByRole("combobox", { name: "Tipo de música", exact: true })
     .selectOption("chords");
   await page
@@ -42,6 +54,12 @@ test("organizes a visit, imports a song into the archive, preserves snapshots an
       exact: true,
     })
     .click();
+  await expect(
+    page.getByRole("heading", { name: "Letras (1)", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Cifras (1)", exact: true }),
+  ).toBeVisible();
   await page
     .getByRole("button", { name: "Adicionar músicas novas", exact: true })
     .click();
