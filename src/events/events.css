@@ -148,7 +148,7 @@
   border: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.5fr);
+  grid-template-columns: minmax(0, 320px);
   gap: 20px;
   margin: 25px 0;
 }

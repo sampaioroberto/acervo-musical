@@ -60,7 +60,7 @@ export function EventAdmin({
     if (
       busy ||
       !window.confirm(
-        `Excluir o evento “${event.title}”? As músicas continuarão no acervo.`,
+        `Excluir o evento “${event.title} de ${formatEventDate(event.date)}”? As músicas continuarão no acervo.`,
       )
     )
       return;
@@ -156,7 +156,7 @@ export function EventAdmin({
                       <a
                         className="button secondary"
                         href={"#/events/" + event.id}
-                        aria-label={"Abrir " + event.title}
+                        aria-label={`Abrir ${event.title} de ${formatEventDate(event.date)}`}
                       >
                         Ver evento
                       </a>
@@ -165,7 +165,7 @@ export function EventAdmin({
                       className="button secondary"
                       disabled={busy}
                       onClick={() => void edit(event.id)}
-                      aria-label={"Editar evento " + event.title}
+                      aria-label={`Editar evento ${event.title} de ${formatEventDate(event.date)}`}
                     >
                       Editar
                     </button>
@@ -173,7 +173,7 @@ export function EventAdmin({
                       className="text-button"
                       disabled={busy}
                       onClick={() => void remove(event)}
-                      aria-label={"Excluir evento " + event.title}
+                      aria-label={`Excluir evento ${event.title} de ${formatEventDate(event.date)}`}
                     >
                       Excluir
                     </button>

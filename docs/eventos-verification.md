@@ -13,3 +13,7 @@ Base: e910fa9. Publicação direta em main, sem PR, conforme autorização do us
 Os PDFs enviados são fontes para extrair/revisar músicas. Os PDFs públicos são gerados dos textos revisados, com as regras existentes; originais continuam privados. A divisão de várias letras é manual. Eventos preservam cópias de texto e ordem; para trocar uma versão em um evento já salvo, retire a música, salve e depois adicione novamente a versão atual do acervo.
 
 A migração de Eventos foi aplicada pelo SQL Editor ao projeto real, sem inserir músicas/eventos de teste. O acervo real continha 14 músicas na conferência posterior. O primeiro evento deve ser organizado e publicado pelo administrador para aparecer na página inicial.
+
+## Simplificação por data
+
+Por solicitação do usuário, o formulário passou a pedir somente a data; o nome Cora é preenchido automaticamente ao salvar rascunhos e publicações. Os controles administrativos incluem a data para distinguir visitas. O teste existente foi adaptado e falhou ao encontrar o campo antigo; após a remoção, os 88 testes e o build passaram. O E2E usa apenas a data e continua verificando a proteção contra sair sem salvar, os PDFs e a preservação do histórico.

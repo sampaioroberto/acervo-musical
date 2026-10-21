@@ -15,18 +15,18 @@ test("organizes a visit, imports a song into the archive, preserves snapshots an
   await page
     .getByRole("button", { name: "Organizar visita", exact: true })
     .click();
-  const title = "Visita E2E " + Date.now(),
+  const title = "Cora",
     songTitle = "Nova do evento " + Date.now();
-  await page
-    .getByRole("textbox", { name: "Nome do evento", exact: true })
-    .fill(title);
+  await expect(
+    page.getByRole("textbox", { name: "Nome do evento", exact: true }),
+  ).toHaveCount(0);
   await page.getByLabel("Data", { exact: true }).fill("2026-05-16");
   page.once("dialog", (dialog) => dialog.dismiss());
   await page.getByRole("link", { name: "Músicas", exact: true }).click();
   await expect(page).toHaveURL(/#\/admin\/events$/);
-  await expect(
-    page.getByRole("textbox", { name: "Nome do evento", exact: true }),
-  ).toHaveValue(title);
+  await expect(page.getByLabel("Data", { exact: true })).toHaveValue(
+    "2026-05-16",
+  );
   await page
     .getByRole("button", {
       name: "Adicionar letra de Canção do amanhecer",
@@ -66,13 +66,21 @@ test("organizes a visit, imports a song into the archive, preserves snapshots an
   await expect(
     page.getByRole("textbox", { name: "Título", exact: true }),
   ).toHaveCount(0);
+  const savedEventResponse = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/rest/v1/rpc/save_event") &&
+      response.request().method() === "POST",
+  );
   await page
     .getByRole("button", { name: "Publicar evento", exact: true })
     .click();
+  const savedEvent = (await (await savedEventResponse).json()) as {
+    id: string;
+  };
   await expect(
     page.getByText("Evento publicado.", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Abrir " + title, exact: true }).click();
+  await page.locator(`a[href="#/events/${savedEvent.id}"]`).click();
   const eventUrl = page.url();
   await expect(
     page.getByRole("heading", { name: title, exact: true }),
@@ -147,8 +155,10 @@ test("organizes a visit, imports a song into the archive, preserves snapshots an
   ).toHaveCount(0);
   await page.getByRole("link", { name: "Acervo", exact: true }).click();
   await expect(
-    page.getByRole("region", { name: "Evento mais recente", exact: true }),
-  ).toContainText(title);
+    page
+      .getByRole("region", { name: "Evento mais recente", exact: true })
+      .getByRole("link", { name: "Ver letras e cifras", exact: true }),
+  ).toHaveAttribute("href", `#/events/${savedEvent.id}`);
   await page
     .getByRole("searchbox", { name: "Buscar título ou trecho", exact: true })
     .fill(songTitle);

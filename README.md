@@ -15,7 +15,7 @@ Endereço público: https://sampaioroberto.github.io/louvores-cora/.
 - Cadastro manual de letras e cifras, com título em negrito na tela e no PDF. Após publicar, o formulário é limpo para a próxima música.
 - Na revisão, remova músicas individuais do lote ou marque todos os itens completos como revisados antes de publicar. Os formulários pedem apenas título, tipo e conteúdo; a busca pública encontra títulos e trechos, sem distinguir maiúsculas ou acentos.
 - Acervo público no Supabase com rascunhos e arquivos originais privados. As regras do banco autorizam apenas a conta administrativa.
-- Eventos: em Administração → Eventos → Organizar visita, informe nome e data, escolha músicas do acervo ou importe novas e ordene letras e cifras separadamente. Novas músicas revisadas entram no acervo antes de serem adicionadas ao evento; títulos já existentes oferecem reutilização. Arquivos com várias letras podem ser divididos manualmente durante a revisão.
+- Eventos: em Administração → Eventos → Organizar visita, informe a data, escolha músicas do acervo ou importe novas e ordene letras e cifras separadamente. O nome é sempre Cora. Novas músicas revisadas entram no acervo antes de serem adicionadas ao evento; títulos já existentes oferecem reutilização. Arquivos com várias letras podem ser divididos manualmente durante a revisão.
 - Eventos publicados ficam na aba Eventos; o de maior data aparece na página inicial. Visitantes consultam músicas individuais e baixam PDFs individuais ou completos por tipo. Textos e ordem são preservados no evento, mesmo após alterações no acervo. Rascunhos permanecem privados.
 
 ## Executar localmente

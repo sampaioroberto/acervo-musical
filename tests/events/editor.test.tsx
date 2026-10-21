@@ -39,9 +39,9 @@ it("organizes both types in chosen order and retries a failed event save with th
       onCancel={() => {}}
     />,
   );
-  fireEvent.change(screen.getByRole("textbox", { name: "Nome do evento" }), {
-    target: { value: "Cora" },
-  });
+  expect(
+    screen.queryByRole("textbox", { name: "Nome do evento" }),
+  ).not.toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("Data"), {
     target: { value: "2026-05-16" },
   });
@@ -61,13 +61,12 @@ it("organizes both types in chosen order and retries a failed event save with th
   events.state.fail = true;
   fireEvent.click(screen.getByRole("button", { name: "Publicar evento" }));
   expect(await screen.findByRole("alert")).toHaveTextContent("Falha de teste");
-  expect(screen.getByRole("textbox", { name: "Nome do evento" })).toHaveValue(
-    "Cora",
-  );
+  expect(screen.getByLabelText("Data")).toHaveValue("2026-05-16");
   events.state.fail = false;
   fireEvent.click(screen.getByRole("button", { name: "Publicar evento" }));
   await waitFor(() => expect(onSaved).toHaveBeenCalledOnce());
   expect(events.records.size).toBe(1);
+  expect([...events.records.values()][0].title).toBe("Cora");
   expect([...events.records.values()][0].songs.map((s) => s.id)).toEqual([
     "b",
     "a",

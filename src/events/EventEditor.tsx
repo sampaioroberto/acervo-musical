@@ -20,7 +20,6 @@ export function EventEditor({
   onCancel: () => void;
 }) {
   const [id] = useState(() => initial?.id ?? crypto.randomUUID()),
-    [title, setTitle] = useState(initial?.title ?? ""),
     [date, setDate] = useState(initial?.date ?? ""),
     [selected, setSelected] = useState<EventSong[]>(initial?.songs ?? []),
     [catalog, setCatalog] = useState<AdminSong[]>([]),
@@ -34,7 +33,6 @@ export function EventEditor({
     [pending, setPending] = useState(0),
     [importBusy, setImportBusy] = useState(false);
   const dirty =
-    title !== (initial?.title ?? "") ||
     date !== (initial?.date ?? "") ||
     pending > 0 ||
     JSON.stringify(selected.map((song) => song.id)) !==
@@ -102,7 +100,7 @@ export function EventEditor({
     if (busy || pending) return;
     const input = {
       id,
-      title,
+      title: "Cora",
       date,
       status,
       songIds: selected.map((song) => song.id),
@@ -145,16 +143,6 @@ export function EventEditor({
         </p>
       )}
       <fieldset disabled={busy} className="event-metadata">
-        <label>
-          Nome do evento
-          <input
-            aria-label="Nome do evento"
-            value={title}
-            maxLength={180}
-            placeholder="Cora"
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
         <label>
           Data
           <input
